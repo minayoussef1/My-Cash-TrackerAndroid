@@ -731,6 +731,40 @@ input[type=range].hue::-moz-range-thumb{width:26px;height:26px;border-radius:50%
 .srow em.inc{color:#22c55e!important}.srow em.exp{color:#ef4444!important}.srow em.loan{color:#a78bfa!important}
 #loglist .pbody{padding:0 14px 6px}#loglist .pbody .row:last-child{border-bottom:0}
 .htip{line-height:1.7;padding:4px 0}#s-home .pbody .rc2l{padding:0}#s-home .pbody .row:last-child{border-bottom:0}
+
+/* ===== add-transaction page in settings style ===== */
+.sin{width:auto!important;flex:1.3;min-width:0;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;margin:0!important;text-align:end;color:var(--text)!important;font-size:16px!important;border-radius:0!important}
+select.sin{text-align-last:end;direction:inherit}
+.srow .amtin{font-size:30px!important;font-weight:800}
+.amtr em{font-size:16px;font-weight:600}
+.srow .ei{font-size:20px;width:22px;text-align:center;flex:none;line-height:1}
+.srow input[type=date].sin{min-height:24px}
+#s-add .sgrp{margin:0 0 14px}
+.srow .sw2{border:0;padding:0;flex:none;cursor:pointer}
+label.srow .sl,.amtr .sl{flex:none;white-space:nowrap}
+.sin{flex:1 1 0!important}
+select.sin{max-width:62%}
+label.srow{box-sizing:border-box}
+label.srow input[type=date]{max-width:60%;text-align:end;direction:ltr}
+
+/* ===== Settings: iPhone-style grouped screen, same design as the appearance page ===== */
+#s-set h2{font-size:32px;font-weight:800;letter-spacing:-.4px;margin:6px 4px 16px;text-align:start}
+#s-set .pfb{border-radius:24px!important;padding:16px!important;margin:0 0 16px!important;box-shadow:var(--shadow-card)!important;border:1px solid var(--line)!important;background:var(--glass)!important}
+#s-set .sgrp{background:var(--glass);border:1px solid var(--line);border-radius:24px;overflow:hidden;box-shadow:var(--shadow-card);margin:0 0 16px}
+#s-set .srow{min-height:58px;padding:12px 16px;font-size:16px;font-weight:500;color:var(--text);border-bottom:1px solid var(--line)}
+#s-set .srow:last-child{border-bottom:0}
+#s-set .srow:active{background:rgba(var(--accrgb),.06)}
+#s-set .srow .ico{width:32px;height:32px;padding:6px;border-radius:10px;background:rgba(var(--accrgb),.14);color:var(--acc);flex:none}
+#s-set .srow em{color:var(--mut);font-size:14px}
+#s-set .sch{color:var(--mut);font-size:22px}
+#s-set .sgrp .srow{animation:rise .45s cubic-bezier(.2,.8,.2,1) both}
+#s-set .sgrp .srow:nth-child(2){animation-delay:.04s}
+#s-set .sgrp .srow:nth-child(3){animation-delay:.08s}
+#s-set .sgrp .srow:nth-child(4){animation-delay:.12s}
+#s-set .sgrp .srow:nth-child(5){animation-delay:.16s}
+#s-set .sgrp .srow:nth-child(6){animation-delay:.2s}
+#s-set .sgrp .srow:nth-child(7){animation-delay:.24s}
+#s-set .sgrp .srow:nth-child(8){animation-delay:.28s}
 </style>
 </head>
 <body>
@@ -777,6 +811,8 @@ migWal();
 let _hist=[];
 const save=(s=true)=>{try{const _j=JSON.stringify(S);if(s&&!save._u){if(_hist.length===0||_hist[_hist.length-1]!==_j){_hist.push(_j);if(_hist.length>15)_hist.shift()}}localStorage.setItem('masrofaty',_j)}catch(e){}if(!s)return;clearTimeout(save.h);save.h=setTimeout(()=>remSync(),1500);clearTimeout(save.d);save.d=setTimeout(()=>{if(S.drive&&S.drive.on&&navigator.onLine)driveBackup(false)},5000)};
 const EN={
+'اختار ملف صوتي من الموبايل':'Choose an audio file','الملف كبير، اختار تسجيل أقصر':'File too large, choose a shorter recording','تعذّر التسجيل':'Recording failed',
+'تكرار كل شهر':'Repeat monthly','تصوير أو اختيار':'Take or choose','اضغط وسجّل':'Tap to record','مسح الصورة':'Remove photo','مسح التسجيل':'Remove recording','اتضافت كعملية متكررة':'Added as a recurring item',
 'اضغط لعرض تفاصيل المحافظ':'Tap to view wallet details',
 'ملاحظة صوتية (اختياري)':'Voice note (optional)','ملاحظة صوتية':'Voice note','اضغط وسجّل ملاحظة صوتية':'Tap to record a voice note','بيسجّل… اضغط للإيقاف':'Recording… tap to stop','اتسجلت ✓':'Recorded ✓','التسجيل الصوتي مش مدعوم على الجهاز ده':'Voice recording is not supported on this device','اسمح للتطبيق بالميكروفون':'Allow microphone access','التسجيل مش موجود':'Recording not found','وقّف التسجيل الأول':'Stop the recording first',
 'العشور / الزكاة':'Tithe / Zakat','مدّخر':'Saved','ابدأ هدفك':'Start a goal','من الدخل':'of income',
@@ -909,7 +945,8 @@ const EN={
 'اختار لونين':'Pick two colours','اضغط لون في الشبكة ليتحط في الخانة المختارة':'Tap a colour in the grid to place it in the selected slot','تلقائي':'Auto',
 'المظهر':'Appearance','خصص شكل التطبيق حسب ذوقك':'Customise the look of the app','الواجهة الزجاجية':'Glass interface','لون واجهة التطبيق':'App interface colour','الألوان':'Colours','النمط':'Mode','غامق':'Dark','غامق زجاجي':'Dark glass','فاتح زجاجي':'Light glass','الإعدادات':'Settings',
 'تخصيص الألوان':'Colour customisation','اختار لونين':'Pick two colours','اختار لونين وشوف التدرج على التطبيق':'Pick two colours and see the gradient across the app',
-'مزج لونين':'Mix two colours','لون واحد للنظام كله · اضغط مزج لونين لو عايز تدرج':'One colour for the whole app · turn on mix for a gradient','اختار لون من تحت، أو فعّل مزج لونين':'Pick a colour below, or turn on mixing'
+'مزج لونين':'Mix two colours','لون واحد للنظام كله · اضغط مزج لونين لو عايز تدرج':'One colour for the whole app · turn on mix for a gradient','اختار لون من تحت، أو فعّل مزج لونين':'Pick a colour below, or turn on mixing',
+'الحسابات والعائلة':'Accounts & family','إمكانيات جهازك':'Your device','انت رام كام في الموبايل؟ هنضبط الشكل على حسب الجهاز':'How much RAM does your phone have? We will set the look for your device','من 1 لـ 4 جيجا':'1 to 4 GB','من 6 لـ 12 جيجا':'6 to 12 GB','أكتر من 12 جيجا':'More than 12 GB','تم ضبط الشكل تلقائي':'Look set to automatic','تصدير Excel':'Export Excel','تصدير PDF':'Export PDF','جاري تجهيز الملف...':'Preparing the file...'
 };
 const isRTL=()=>S.lang==='ar';
 const CUR=()=>S.cur||curOf();
@@ -1213,7 +1250,7 @@ function recRun(){
   const td=iso(new Date());let ch=false;
   S.rec.forEach(r=>{let y,m;if(r.last){[y,m]=r.last.split('-').map(Number);m++;if(m>12){m=1;y++}}else{[y,m]=r.start.split('-').map(Number)}
     for(let g=0;g<60;g++){const dim=new Date(y,m,0).getDate(),ds=y+'-'+String(m).padStart(2,'0')+'-'+String(Math.min(r.day,dim)).padStart(2,'0');if(ds>td)break;
-      S.tx.push({id:Date.now()+''+Math.random().toString(36).slice(2,6),type:r.type,cat:r.cat,amt:r.amt,note:r.name,w:W0().id,date:ds,rec:r.id,t:Date.now()});
+      S.tx.push({id:Date.now()+''+Math.random().toString(36).slice(2,6),type:r.type,cat:r.cat,amt:r.amt,note:r.name,w:(r.w&&S.wallets.some(x=>x.id===r.w))?r.w:W0().id,date:ds,rec:r.id,t:Date.now()});
       r.last=y+'-'+String(m).padStart(2,'0');ch=true;m++;if(m>12){m=1;y++}}});
   if(ch)save();
 }
@@ -1386,10 +1423,10 @@ const hx=c=>[1,3,5].map(i=>parseInt(c.slice(i,i+2),16));
 const mixc=(a,b,k)=>{const x=hx(a),y=hx(b);return '#'+x.map((v,i)=>Math.round(v*k+y[i]*(1-k)).toString(16).padStart(2,'0')).join('')};
 function applyTheme(){
   let t=S.theme;const dm=matchMedia('(prefers-color-scheme: dark)');
-  if(t==='auto')t=dm.matches?'dark':'light';
+  if(t==='auto')t=S.glassAuto&&!S.ramLow?(dm.matches?'glass':'glasslight'):(dm.matches?'dark':'light');
   const _blk=S.theme==='black';if(_blk)t='dark';
   const h=document.documentElement,st=h.style,[a,b]=accPair();
-  S.lite=false;h.dataset.theme=t;h.classList.remove('lite');h.classList.toggle('black',_blk);
+  S.lite=false;h.dataset.theme=t;h.classList.remove('lite');if(S.ramLow)h.classList.add('lite');h.classList.toggle('black',_blk);
   st.setProperty('--acc',a);st.setProperty('--acc2',b);st.setProperty('--accrgb',hx(a).join(','));st.setProperty('--acc2rgb',hx(b).join(','));
   if(t==='glass'){const B='#0b1226';st.setProperty('--page',`radial-gradient(120% 70% at 80% 0%,${mixc(a,B,.4)} 0%,transparent 60%),radial-gradient(90% 60% at 0% 100%,${mixc(b,B,.4)} 0%,transparent 55%),linear-gradient(180deg,${mixc(a,B,.15)},${B})`)}
   else if(t==='glasslight'){const W='#ffffff';st.setProperty('--page',`radial-gradient(120% 70% at 80% 0%,${mixc(a,W,.45)} 0%,transparent 62%),radial-gradient(90% 60% at 0% 100%,${mixc(b,W,.4)} 0%,transparent 58%),linear-gradient(180deg,${mixc(a,W,.1)},${mixc(b,W,.16)})`)}
@@ -1446,6 +1483,10 @@ function _hslHex(h,sat,l){l/=100;const a=sat*Math.min(l,1-l)/100;const fn=n=>{co
 function setCustomAcc(){const a=$('#ca1').value,b=$('#ca2').value;if(!/^#[0-9a-f]{6}$/i.test(a)||!/^#[0-9a-f]{6}$/i.test(b))return;S.accent='custom';S.accC=[a,b];save();applyTheme();document.querySelectorAll('.swgrid .sw.on').forEach(e=>e.classList.remove('on'));const p=$('#caprev');if(p)p.style.background=`linear-gradient(135deg,${a},${b})`}
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(S.theme==='auto')applyTheme()})}catch(e){}
 function setTheme(t){S.theme=t;save();applyTheme();setScr()}
+
+function openRam(){openPick(tr('إمكانيات جهازك'),`<div class="g"><p style="line-height:1.7;margin:0 0 10px">${tr('انت رام كام في الموبايل؟ هنضبط الشكل على حسب الجهاز')}</p><button class="btn" style="width:100%;margin-top:6px" onclick="setRam('low')">${tr('من 1 لـ 4 جيجا')}</button><button class="btn" style="width:100%;margin-top:8px" onclick="setRam('high')">${tr('من 6 لـ 12 جيجا')}</button><button class="btn s" style="width:100%;margin-top:8px" onclick="setRam('high')">${tr('أكتر من 12 جيجا')}</button></div>`)}
+function setRam(k){S.ramAsked=true;S.ramLow=k==='low';S.glassAuto=k!=='low';S.theme='auto';save();applyTheme();closeSheet();try{render()}catch(e){}toast(tr('تم ضبط الشكل تلقائي'))}
+function ramCheck(){if(S.ramAsked||!S.done)return;if(document.querySelector('#ob.on,#tour.on')){setTimeout(ramCheck,1500);return}openRam()}
 function setLite(v){S.lite=v;save();applyTheme();setScr()}
 const f=x=>Math.round(x*100/100).toLocaleString(P().arNums?'ar-EG':'en-US');
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
@@ -1529,6 +1570,14 @@ function openPick(title,html){$('#sheet').innerHTML=`<div class="back" onclick="
 function openCatPick(){const cats=CATS[add.type]||[];openPick('اختار التصنيف',`<div class="g"><div class="cats">${cats.map(c=>`<button class="cat ${add.cat===c[1]?'on':''}" onclick="pickCat('${c[1]}')"><span>${c[0]}</span>${c[1]}</button>`).join('')}</div></div>`)}
 function openWalPick(){openPick('اختار المحفظة',`<div class="sgrp">${S.wallets.map(w=>`<button class="srow" onclick="pickWal('${w.id}')"><i class="ti">${w.ico}</i><span class="sl">${wn(w)}</span>${(add.w||W0().id)===w.id?'<em>✓</em>':''}</button>`).join('')}</div>`)}
 function openTypePick(){const others=['loan','repay','borrow','payback','transfer'];openPick('نوع آخر',`<div class="sgrp">${others.map(t=>`<button class="srow" onclick="pickType('${t}')"><span class="sl">${TYPES[t][0]}</span>${add.type===t?'<em>✓</em>':''}</button>`).join('')}</div>`)}
+const AIC={cash:'<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 9.5h.01M17.5 14.5h.01"/>',tag:'<path d="M3 12V4h8l9 9-8 8z"/><circle cx="7.5" cy="8.5" r="1.2" fill="currentColor"/>',cal:'<rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/>',note:'<path d="M5 4h14v16H5z"/><path d="M9 9h6M9 13h6M9 17h3"/>',rcpt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/>',mic:'<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',split:'<path d="M4 12h6l6-6h4M10 12l6 6h4"/><path d="M18 4l2 2-2 2M18 16l2 2-2 2"/>',repeat:'<path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/>',type:'<path d="M4 7h16M4 12h10M4 17h16"/>',swap:'<path d="M7 7h13M16 3l4 4-4 4M17 17H4M8 13l-4 4 4 4"/>',user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',wal:'<path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1"/><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2H5a2 2 0 0 1-2-2"/><circle cx="16.5" cy="13.5" r="1.2" fill="currentColor"/>'};
+const aic=k=>`<svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${AIC[k]}</svg>`;
+const aBtn=(ic,label,val,click)=>`<button class="srow" onclick="${click}">${ic}<span class="sl">${label}</span>${val?`<em>${val}</em>`:''}<i class="sch">‹</i></button>`;
+const aTog=(ic,label,on,click)=>`<div class="srow" style="cursor:default">${ic}<span class="sl">${label}</span><button class="sw2 ${on?'on':''}" onclick="${click}" aria-label="${label}"><i></i></button></div>`;
+const aIn=(ic,label,inner)=>`<label class="srow">${ic}<span class="sl">${label}</span>${inner}</label>`;
+function fkeep(fn){const g=i=>$(i)?$(i).value:'';const v=[g('#a-amt'),g('#a-note'),g('#a-date'),g('#a-due')],wasSplit=add.type==='income'&&add.split;fn();addScr();const nowSplit=add.type==='income'&&add.split;[['#a-amt',0],['#a-note',1],['#a-date',2],['#a-due',3]].forEach(([i,k])=>{if(v[k]&&$(i)&&!(k===0&&(nowSplit||wasSplit)))$(i).value=v[k]})}
+function togSplit(){fkeep(()=>{add.split=!add.split})}
+function togRep(){fkeep(()=>{add.rep=!add.rep})}
 function addScr(){
   const cats=CATS[add.type]||[],isL=add.type==='loan'||add.type==='borrow',isR=add.type==='repay'||add.type==='payback',isT=add.type==='transfer',isP=isL||isR;
   const isMain=add.type==='expense'||add.type==='income';
@@ -1536,28 +1585,29 @@ function addScr(){
   const curCat=cats.find(c=>c[1]===add.cat);
   const head=`<div class="rtop"><button class="rback" onclick="go('home')">‹</button><h2>إضافة عملية</h2><span class="rsp"></span></div>`;
   const seg=`<div class="seg2"><button class="st2 exp ${add.type==='expense'?'on':''}" onclick="setT('expense')">مصروف</button><button class="st2 inc ${add.type==='income'?'on':''}" onclick="setT('income')">دخل</button></div>
-  <button class="fcard frow orow" onclick="openTypePick()"><span class="fv">${isMain?'نوع آخر (سلفة، دين، تحويل)':TYPES[add.type][0]}</span><i class="sch">‹</i></button>`;
+  <div class="sgrp">${aBtn(aic('type'),isMain?'نوع آخر (سلفة، دين، تحويل)':TYPES[add.type][0],'','openTypePick()')}</div>`;
   const quick=`<div class="g"><div class="sec" style="margin-top:0">⚡ تسجيل سريع</div><div class="row" style="border:0;padding:0"><input id="qk" placeholder="اكتب: غدا 80 أو تاكسي 50" oninput="qkPrev()"><button class="btn" style="width:auto;margin:0;padding:12px 18px" onclick="qkSave()">⚡</button></div><div class="sec" id="qkp" style="margin:6px 4px 0;min-height:16px"></div></div>`;
   let body;
   if(isR){const D=add.type==='payback',ol=D?openDebts():openLoans();
     body=ol.length?`<div class="sec">${D?'اختار الدين اللي سدّدته':'اختار السلفة اللي اترجعت'}</div>`+ol.map(l=>`<div class="g tap" onclick="openRepay('${l.id}')"><div class="row" style="border:0;padding:0"><div class="ic" style="background:rgba(139,92,246,.25)">🤝</div><div class="m"><b>${U(l.note)}</b><small>${l.date}</small></div><div class="a ${D?'dbt':'loan'}">${f(l.rem)}</div></div></div>`).join(''):(D?'<div class="g empty">مفيش ديون عليك 🎉</div>':'<div class="g empty">مفيش سلف مستحقة 🎉</div>');
   }else if(isT){
     const wopt=(sel)=>S.wallets.map((w,i)=>`<option value="${w.id}" ${i===sel?'selected':''}>${w.ico} ${esc(wLab(w))}</option>`).join('');
-    body=`<label class="flab">من محفظة</label><select id="a-w1">${wopt(0)}</select><label class="flab">إلى محفظة</label><select id="a-w2">${wopt(1)}</select>
-    <label class="flab">المبلغ</label><input id="a-amt" type="number" inputmode="decimal" placeholder="0"><label class="flab">التاريخ</label><input id="a-date" type="date" value="${iso(new Date())}">
+    body=`<div class="sgrp">${aIn(aic('wal'),'من محفظة',`<select id="a-w1" class="sin">${wopt(0)}</select>`)}${aIn(aic('swap'),'إلى محفظة',`<select id="a-w2" class="sin">${wopt(1)}</select>`)}</div>
+    <div class="sgrp"><div class="srow amtr" style="cursor:default">${aic('cash')}<span class="sl">المبلغ</span><input id="a-amt" type="number" inputmode="decimal" placeholder="0" class="amtin sin"><em>${CUR()}</em></div>${aIn(aic('cal'),'التاريخ',`<input id="a-date" type="date" class="sin" value="${iso(new Date())}">`)}</div>
     <button class="btn savebtn" onclick="saveTx()">حفظ العملية</button>`;
   }else{
-    body=`<label class="flab">المبلغ</label>
-    <div class="fcard amt"><input id="a-amt" type="number" inputmode="decimal" placeholder="0" class="amtin" ${(add.type==='income'&&add.split&&S.wallets.length>1)?'readonly':''}><span class="cur">${CUR()}</span></div>
-    ${cats.length?`<label class="flab">التصنيف</label><button class="fcard frow" onclick="openCatPick()"><span class="ficon2">${curCat?curCat[0]:'🏷️'}</span><span class="fv">${add.cat||'اختر التصنيف'}</span><i class="sch">‹</i></button>`:''}
-    ${(add.type==='income'&&S.wallets.length>1)?`<label class="flab">المحفظة</label><div class="seg2" style="margin:0 0 8px"><button class="st2 sgbtn ${!add.split?'on':''}" style="font-size:15px" onclick="setSplit(0)">محفظة واحدة</button><button class="st2 sgbtn ${add.split?'on':''}" style="font-size:15px" onclick="setSplit(1)">قسّم على المحافظ</button></div>`:(S.wallets.length?`<label class="flab">المحفظة</label>`:'')}
-    ${(add.type==='income'&&add.split&&S.wallets.length>1)?S.wallets.map(w=>`<div class="fcard frow"><span class="ficon2">${w.ico}</span><span class="fv">${wn(w)}</span><input class="wsp" data-w="${w.id}" type="number" inputmode="decimal" placeholder="0" oninput="splitSum()"></div>`).join(''):(S.wallets.length?`<button class="fcard frow" onclick="openWalPick()"><span class="ficon2">${wObj.ico}</span><span class="fv">${wn(wObj)}</span><i class="sch">‹</i></button>`:'')}
-    <label class="flab">التاريخ</label><div class="fcard frow"><span class="ficon2">📅</span><input id="a-date" type="date" value="${iso(new Date())}"></div>
-    <label class="flab">${isP?'اسم الشخص':'ملاحظات (اختياري)'}</label><div class="fcard frow"><span class="ficon2">📝</span><input id="a-note" placeholder="${isP?'مثال: أحمد':'أضف ملاحظة هنا...'}"></div>
-    ${isL?`<label class="flab">${add.type==='borrow'?'موعد السداد (اختياري)':'موعد الاسترداد (اختياري)'}</label><div class="fcard frow"><span class="ficon2">📅</span><input id="a-due" type="date"></div>`:''}
-    <label class="flab">${tr('صورة الإيصال (اختياري)')}</label><div class="fcard frow"><span class="ficon2">🧾</span><label class="fv" style="cursor:pointer;flex:1">${pendingPhoto?tr('اتصورت ✓'):tr('اضغط تصور أو تختار صورة')}<input type="file" accept="image/*" capture="environment" onchange="pickPhoto(this)" style="display:none"></label>${pendingPhoto?`<button class="btn s" style="width:auto;padding:6px 10px" onclick="clearPhoto()">${tr('مسح')}</button>`:''}</div>${pendingPhoto?`<img src="${pendingPhoto}" style="width:100%;border-radius:14px;margin-top:8px;max-height:200px;object-fit:cover">`:''}
-    <label class="flab">${tr('ملاحظة صوتية (اختياري)')}</label><div class="fcard frow"><span class="ficon2"><i class="mi" style="--m:${VMIC}"></i></span><button type="button" class="fv" style="flex:1;text-align:start;background:none;border:0;color:inherit;font:inherit;cursor:pointer" onclick="voiceToggle()">${isRec()?`<span style="color:#ef4444">● ${tr('بيسجّل… اضغط للإيقاف')} <b id="rec-t">${vFmt(Date.now()-vT0)}</b></span>`:pendingVoice?tr('اتسجلت ✓'):tr('اضغط وسجّل ملاحظة صوتية')}</button>${pendingVoice&&!isRec()?`<button class="btn s" style="width:auto;padding:6px 10px" onclick="clearVoice()">${tr('مسح')}</button>`:''}</div>${pendingVoice&&!isRec()?`<audio id="a-aud" controls style="width:100%;margin-top:8px"></audio>`:''}
-    <button class="btn savebtn" onclick="saveTx()">حفظ</button>`;setTimeout(voiceBind,0);
+    const spl=add.type==='income'&&add.split&&S.wallets.length>1;
+    const grpA=`<div class="sgrp"><div class="srow amtr" style="cursor:default">${aic('cash')}<span class="sl">المبلغ</span><input id="a-amt" type="number" inputmode="decimal" placeholder="0" class="amtin sin" ${spl?'readonly':''}><em>${CUR()}</em></div></div>`;
+    const catRow=cats.length?`<button class="srow" onclick="openCatPick()"><span class="ei">${curCat?curCat[0]:'🏷️'}</span><span class="sl">${tr('التصنيف')}</span><em>${add.cat||tr('اختر التصنيف')}</em><i class="sch">‹</i></button>`:'';
+    const walRow=(S.wallets.length&&!spl)?`<button class="srow" onclick="openWalPick()">${aic('wal')}<span class="sl">${tr('المحفظة')}</span><em>${wObj.ico} ${wn(wObj)}</em><i class="sch">‹</i></button>`:'';
+    const splRow=(add.type==='income'&&S.wallets.length>1)?aTog(aic('split'),tr('قسّم على المحافظ'),!!add.split,'togSplit()'):'';
+    const dateRow=aIn(aic('cal'),tr('التاريخ'),`<input id="a-date" type="date" class="sin" value="${iso(new Date())}">`);
+    const noteRow=aIn(aic(isP?'user':'note'),isP?tr('اسم الشخص'):tr('ملاحظات (اختياري)'),`<input id="a-note" class="sin" placeholder="${isP?'مثال: أحمد':tr('أضف ملاحظة هنا...')}">`);
+    const dueRow=isL?aIn(aic('cal'),add.type==='borrow'?tr('موعد السداد (اختياري)'):tr('موعد الاسترداد (اختياري)'),`<input id="a-due" type="date" class="sin">`):'';
+    const repRow=(isMain&&!spl)?aTog(aic('repeat'),tr('تكرار كل شهر'),!!add.rep,'togRep()'):'';
+    const splitRows=spl?`<div class="sgrp">${S.wallets.map(w=>`<label class="srow"><span class="ei">${w.ico}</span><span class="sl">${wn(w)}</span><input class="wsp sin" data-w="${w.id}" type="number" inputmode="decimal" placeholder="0" oninput="splitSum()"><em>${CUR()}</em></label>`).join('')}</div>`:'';
+    const photoRows=`<div class="sgrp"><label class="srow" style="cursor:pointer">${aic('rcpt')}<span class="sl">${tr('صورة الإيصال (اختياري)')}</span><em>${pendingPhoto?tr('اتصورت ✓'):tr('تصوير أو اختيار')}</em><input type="file" accept="image/*" capture="environment" onchange="pickPhoto(this)" style="display:none"></label>${pendingPhoto?`<button class="srow" onclick="clearPhoto()"><span class="sl" style="color:#ef4444">${tr('مسح الصورة')}</span></button>`:''}<button type="button" class="srow" onclick="voiceToggle()">${aic('mic')}<span class="sl">${tr('ملاحظة صوتية (اختياري)')}</span>${isRec()?`<em style="color:#ef4444">● ${tr('بيسجّل… اضغط للإيقاف')} <b id="rec-t">${vFmt(Date.now()-vT0)}</b></em>`:`<em>${pendingVoice?tr('اتسجلت ✓'):tr('اضغط وسجّل')}</em>`}</button>${pendingVoice&&!isRec()?`<button class="srow" onclick="clearVoice()"><span class="sl" style="color:#ef4444">${tr('مسح التسجيل')}</span></button>`:''}</div>${pendingPhoto?`<img src="${pendingPhoto}" style="width:100%;border-radius:16px;margin:-6px 0 14px;max-height:200px;object-fit:cover">`:''}${pendingVoice&&!isRec()?`<audio id="a-aud" controls style="width:100%;margin:-6px 0 14px"></audio>`:''}`;
+    body=grpA+`<div class="sgrp">${catRow}${splRow}${walRow}${dateRow}${noteRow}${dueRow}${repRow}</div>`+splitRows+photoRows+`<button class="btn savebtn" onclick="saveTx()">حفظ</button>`;setTimeout(voiceBind,0);
   }
   const tplRow=(S.tpl&&S.tpl.length&&!isR&&!isT)?`<div class="tabs wide" style="margin:0 0 10px">${S.tpl.map((t,i)=>`<button class="chip" onclick="applyTpl(${i})">⭐ ${U(t.name)}</button>`).join('')}</div>`:'';
   const tplBtn=(!isR&&!isT)?`<button class="btn s" style="margin:8px 0 0;width:100%" onclick="openSaveTpl()">⭐ ${tr('احفظ كقالب')}</button>`:'';
@@ -1604,13 +1654,14 @@ function takeTithe(a,cat,w){S.tx.push({id:Date.now()+'',type:'expense',cat,amt:+
 let pendingPhoto=null;
 const VMIC='url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAAACXBIWXMAAAsTAAALEwEAmpwYAAADGElEQVR4nO2czWoUQRDH/yzMqk/gwfXgB3oRA84p7M2LeAzoK+SgGFBZMSK+gGYPosJ4deMnnoUoeo+TCEF8ARMfYgO7UlCBosmym6mZnenu+kHDHJrq+v93vra7pwDDMAzDMPyhBaAL4B6APoBsSusBSGrIsw3gwQz59VlLl7VVmtAKgH8Axkdsq5g/qwXyJG13WGupnAawXSChsWcGHrQtAJ0yzdtzBhjxIIMGX8IJjz0tvwFrGTkad8swsX3ImfcewBmEx1kAHx2tufbHX3ECPkL4PHY03y4aqOU8MOjMi4VPzqVc6Oncde55IV62kzjn3BMXUYD7IsBPxMeW0E/viUemLwKsIz7eCv3PigTIRAA6jo1Mq98MhBmowQxUEoSBp7jVgfcGXgewD2AI4FoN43tv4Csx/ssaxvfewMz38XsiAB3HZmBPqz/hScmHNc3nZTUbWLd+7w30nswMnMwJAJemzLPNamCLY1HMKDgO4A8b86EEAw8mP38DOIYIWBDG0Iuy1sB90Y9iB0/qrDloDZSxKHbwpGagjtQM1JGagZNJAfxgwUmDDKQNAq8BfAdwBQ3mmxBzo0EG3hR9vqLB5CLR5QYZuCz6UI6NJTcDdeRmoI7cDNSRm4E6cjNQxxeR6FKDDFwSfSjHxrIAYAPA84a9SCec00YIMzap/ZXTkZqBOlIzUEdqBuq4LATTvhetgUPRj2IHTwJghwW/KcHAAffZ8XUBvAg0P3ehxGXNi1V834bY9+fVrd/7/XlK1Pq935+nRK2/bgGZ7+N7LyB2A1+I8el43nhv4FW+gQ/5eN54byBxklsdBGFgnZiBSsxAJWagErX+NRGAPj6OjXdC/1PtJ/+NXgqsiG3tJ/9u0QmqqxIL58soOuGWPaGiNLHwuYyyJ+BCXHLNgYrShM4TR/MtTbC2U/5jzN9lUF2VEC9beeZR2yxjmaDDp7EMPOKb7Do/4n2uH0gafh1SfOxvmbPxHWfjUOjl7zarWMpIuBDXXsAG7vI9r9IrpsWP9bsNLwE6a/3ANdayWHUJUMMwDMMwUCL/AQxFzzUdeM8FAAAAAElFTkSuQmCC)';
 let pendingVoice=null,vRec=null,vStream=null,vChunks=[],vTimer=null,vT0=0;
-const isRec=()=>!!(vRec&&vRec.state==='recording');
+let vNatOn=false;const vNat=()=>{const C=window.Capacitor;return !!(C&&C.isNativePlatform&&C.isNativePlatform()&&C.Plugins&&C.Plugins.VoiceRecorder)};const isRec=()=>!!((vRec&&vRec.state==='recording')||vNatOn);
 const vFmt=ms=>{const s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 function voiceBind(){const a=$('#a-aud');if(a&&pendingVoice)a.src=pendingVoice}
-function voiceStop(discard){clearInterval(vTimer);try{if(isRec()){if(discard)vRec.onstop=()=>{vStream&&vStream.getTracks().forEach(t=>t.stop())};vRec.stop()}}catch(e){}if(discard)pendingVoice=null}
+function voiceStop(discard){clearInterval(vTimer);if(vNatOn){vNatOn=false;window.Capacitor.Plugins.VoiceRecorder.stopRecording().then(r=>{if(discard)return;const v=r&&r.value;if(v&&v.recordDataBase64){pendingVoice='data:'+(v.mimeType||'audio/aac')+';base64,'+v.recordDataBase64;refreshAdd()}}).catch(()=>voiceFail('error'));if(discard)pendingVoice=null;return}try{if(isRec()){if(discard)vRec.onstop=()=>{vStream&&vStream.getTracks().forEach(t=>t.stop())};vRec.stop()}}catch(e){}if(discard)pendingVoice=null}
 async function voiceToggle(){
   if(isRec()){voiceStop();return}
-  if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder)){toast(tr('التسجيل الصوتي مش مدعوم على الجهاز ده'));return}
+  if(vNat()){const VR=window.Capacitor.Plugins.VoiceRecorder;try{const p=await VR.requestAudioRecordingPermission();if(!(p&&p.value)){voiceFail('NotAllowedError');return}await VR.startRecording();vNatOn=true;vT0=Date.now();vTimer=setInterval(()=>{const e=$('#rec-t');if(e)e.textContent=vFmt(Date.now()-vT0);if(Date.now()-vT0>180000)voiceStop()},500);refreshAdd()}catch(e){voiceFail((e&&e.name)||'error')}return}
+  if(!(navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&window.MediaRecorder)){voiceFail('unsupported');return}
   try{vStream=await navigator.mediaDevices.getUserMedia({audio:true});
     const mt=['audio/webm;codecs=opus','audio/mp4','audio/webm'].find(t=>MediaRecorder.isTypeSupported(t));
     vRec=new MediaRecorder(vStream,Object.assign({audioBitsPerSecond:32000},mt?{mimeType:mt}:{}));vChunks=[];
@@ -1619,8 +1670,13 @@ async function voiceToggle(){
     vRec.start();vT0=Date.now();
     vTimer=setInterval(()=>{const e=$('#rec-t');if(e)e.textContent=vFmt(Date.now()-vT0);if(Date.now()-vT0>180000)voiceStop()},500);
     refreshAdd();
-  }catch(e){toast(tr('اسمح للتطبيق بالميكروفون'))}
+  }catch(e){voiceFail((e&&e.name)||'error')}
 }
+function voiceFail(code){
+  const M={NotAllowedError:'الميكروفون مقفول للتطبيق. افتح إعدادات الموبايل ← التطبيقات ← My Cash ← الأذونات ← الميكروفون وفعّله.',PermissionDeniedError:'الميكروفون مقفول للتطبيق. افتح إعدادات الموبايل ← التطبيقات ← My Cash ← الأذونات ← الميكروفون وفعّله.',SecurityError:'التطبيق مش قادر يوصل للميكروفون.',NotFoundError:'مفيش ميكروفون متاح على الجهاز.',NotReadableError:'الميكروفون مشغول بتطبيق تاني، اقفله وجرّب تاني.',unsupported:'التسجيل المباشر مش مدعوم في النسخة دي من التطبيق.'};
+  openPick('🎙 '+tr('ملاحظة صوتية'),`<div class="g"><p style="margin:0 0 8px;line-height:1.7">${tr(M[code]||'تعذّر التسجيل')}</p><small style="color:var(--mut)">${esc(code)}</small></div><label class="btn" style="display:block;text-align:center;cursor:pointer;margin-top:12px">${tr('اختار ملف صوتي من الموبايل')}<input type="file" accept="audio/*" onchange="pickVoiceFile(this)" style="display:none"></label>`)
+}
+function pickVoiceFile(inp){const f=inp.files&&inp.files[0];if(!f)return;if(f.size>6e6){toast(tr('الملف كبير، اختار تسجيل أقصر'));return}const r=new FileReader();r.onload=()=>{pendingVoice=r.result;closeSheet();refreshAdd()};r.readAsDataURL(f)}
 function clearVoice(){pendingVoice=null;refreshAdd()}
 async function playVoice(id){const t=S.tx.find(x=>x.id===id);const d=t&&t.voice?await photoGet('v_'+t.voice):null;if(!d){toast(tr('التسجيل مش موجود'));return}
   openPick('🎙 '+tr('ملاحظة صوتية'),`<div class="g"><b>${esc(t.note||t.cat||'')}</b><small style="display:block;color:var(--mut)">${t.date}</small><audio id="pv-aud" controls style="width:100%;margin-top:10px"></audio></div>`);
@@ -1649,7 +1705,9 @@ function saveTx(){
   else{tx.w=add.w||W0().id;S.lastW=tx.w}
   if(pendingPhoto){tx.photo=tx.id;photoPut(tx.id,pendingPhoto).catch(()=>{});pendingPhoto=null}
   if(pendingVoice){tx.voice=tx.id;photoPut('v_'+tx.id,pendingVoice).catch(()=>{});pendingVoice=null}
-  S.tx.push(tx);save();go('home');budgetCheck(ty,add.cat);if(ty==='income')askTithe(amt,tx.w);
+  S.tx.push(tx);
+  if(add.rep&&(ty==='expense'||ty==='income')){const dd=(tx.date||iso(new Date())),day=Math.min(31,parseInt(dd.slice(8,10))||1),bs=new Date(dd+'T00:00'),nx=new Date(bs.getFullYear(),bs.getMonth()+1,1);S.rec.push({id:'r'+Date.now(),type:ty,cat:add.cat,name:note||add.cat,amt,day,w:tx.w,start:nx.getFullYear()+'-'+String(nx.getMonth()+1).padStart(2,'0')});toast(tr('اتضافت كعملية متكررة'))}
+  save();go('home');budgetCheck(ty,add.cat);if(ty==='income')askTithe(amt,tx.w);
 }
 
 let logOpen={};function logTg(el){logOpen[el.dataset.k]=el.open}
@@ -1781,7 +1839,7 @@ function setScr(){
   const row=(k,ic,label,val)=>`<button class="srow" onclick="openSet('${k}')">${sIco(ic)}<span class="sl">${label}</span>${val?`<em>${val}</em>`:''}<i class="sch">‹</i></button>`;
   $('#s-set').innerHTML=`<h2>الإعدادات</h2>
   <button class="g pfb" onclick="openSet('personal')"><span class="av big">${sIco('person')}</span><span class="pt"><b>${S.name?U(S.name):'My Cash: Tracker'}</b><small>إدارة حسابك وبياناتك</small></span></button>
-  <div class="sgrp">${row('salary','wallet','المرتب',S.sal.on?String(S.sal.day):'')}${row('transfer','devices','التحويل بين الأجهزة')}${row('backup','cloud','النسخ الاحتياطي')}${row('theme','palette','المظهر',TL[S.theme]||'فاتح')}${row('lang','globe','اللغة',U((LANGS[S.lang]||LANGS.ar)[0]))}${row('profiles','person','الملفات والعائلة',U(profName()))}</div>
+  <div class="sgrp">${row('salary','wallet','المرتب',S.sal.on?String(S.sal.day):'')}${row('transfer','devices','التحويل بين الأجهزة')}${row('backup','cloud','النسخ الاحتياطي')}${row('theme','palette','المظهر',TL[S.theme]||'فاتح')}${row('lang','globe','اللغة',U((LANGS[S.lang]||LANGS.ar)[0]))}${row('profiles','person','الحسابات والعائلة',U(profName()))}</div>
   <div class="sgrp">${row('help','help','مساعدة ودعم')}${row('about','info','عن التطبيق')}</div>`;
   if(setSheetKey&&$('#sheet').classList.contains('on'))openSet(setSheetKey);
 }
@@ -1834,7 +1892,7 @@ function openSet(k){
   <div class="sec">الخصوصية</div><div class="g" style="font-size:14px;color:var(--mut);line-height:1.7;padding:14px 16px">بياناتك بتتحفظ على جهازك، ولو سجّلت دخول Google بتتحفظ نسخة احتياطية في حسابك الخاص بس. التطبيق مش بيبعت بياناتك لأي حد.</div>
   <div class="foot">© ${new Date().getFullYear()} ${devName||DEV.appName||APP_NAME}</div>`;
 
-  const T={salary:['المرتب',salHTML()],personal:['البيانات الشخصية',persHTML],transfer:['التحويل بين الأجهزة',transHTML],backup:['النسخ الاحتياطي',backupCard()],notif:['الإشعارات',remCard()],theme:['المظهر',themeHTML],lang:['اللغة',langHTML],profiles:['الملفات والعائلة',profHTML()],help:['مساعدة ودعم',helpHTML],about:['عن التطبيق',aboutHTML]}[k];
+  const T={salary:['المرتب',salHTML()],personal:['البيانات الشخصية',persHTML],transfer:['التحويل بين الأجهزة',transHTML],backup:['النسخ الاحتياطي',backupCard()],notif:['الإشعارات',remCard()],theme:['المظهر',themeHTML],lang:['اللغة',langHTML],profiles:['الحسابات والعائلة',profHTML()],help:['مساعدة ودعم',helpHTML],about:['عن التطبيق',aboutHTML]}[k];
   if(!T)return;
   $('#sheet').innerHTML=`<div class="back" onclick="closeSet()"></div><div class="panel det"><div class="grab"></div><h3>${T[0]}</h3>${T[1]}</div>`;
   if(k==='theme'){$('#sheet .panel').classList.add('themeSheet');setTimeout(mixUI,0)}
@@ -1876,6 +1934,16 @@ function undoLast(){
   render();updBadge();toast(tr('اتراجعنا عن آخر حاجة'));
 }
 
+
+async function exportReceiptsCSV(){const items=S.tx.filter(t=>t.photo).sort((a,b)=>b.date.localeCompare(a.date));if(!items.length)return;
+  const q=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+  const rows=[['التاريخ','النوع','المبلغ','البند','الملاحظة','المحفظة'].map(q).join(',')].concat(items.map(t=>[t.date,t.type,t.amt,t.cat,t.note||'',(S.wallets.find(w=>w.id===t.w)||{name:''}).name].map(q).join(',')));
+  saveFile('my-cash-receipts.csv','text/csv;charset=utf-8','\ufeff'+rows.join('\n'));}
+async function exportReceiptsPDF(){const items=S.tx.filter(t=>t.photo).sort((a,b)=>b.date.localeCompare(a.date));if(!items.length)return;toast(tr('جاري تجهيز الملف...'));
+  let body='';for(const t of items){const d=await photoGet(t.photo);body+=`<div class="r"><img src="${d||''}" alt=""><div><b>${esc(t.note||t.cat||'')}</b><br>${t.date} · ${f(t.amt)} ${CUR()}</div></div>`}
+  const html=`<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-8"><title>${APP_NAME} - ${tr('الإيصالات')}</title><style>body{font-family:sans-serif;margin:24px;color:#111}h1{font-size:20px}.r{display:flex;gap:12px;align-items:center;border:1px solid #ddd;border-radius:12px;padding:10px;margin:10px 0;break-inside:avoid}img{width:140px;height:140px;object-fit:cover;border-radius:10px}@media print{body{margin:10mm}}</style></head><body><h1>${APP_NAME} · ${tr('الإيصالات')}</h1>${body}</body></html>`;
+  const C=window.Capacitor;if(C&&C.isNativePlatform&&C.isNativePlatform()){saveFile('my-cash-receipts.html','text/html',html);return}
+  const w=window.open('','_blank');if(w){w.document.write(html);w.document.close();setTimeout(()=>{try{w.print()}catch(e){}},400)}else saveFile('my-cash-receipts.html','text/html',html);}
 function openReceipts(){
   const items=S.tx.filter(t=>t.photo).sort((a,b)=>b.date.localeCompare(a.date)||b.t-a.t);
   let h='',last='';
@@ -1884,7 +1952,8 @@ function openReceipts(){
     Object.keys(grp).sort().reverse().forEach(k=>{const arr=grp[k],tot=arr.filter(t=>t.type==='expense').reduce((a,t)=>a+t.amt,0),[y,m]=k.split('-');
       h+=`<div class="sec" style="margin-bottom:6px">${tr(MN[+m-1])} ${y} · ${arr.length} ${tr('إيصال')}${tot?' · '+f(tot)+' '+CUR():''}</div><div class="rgrid">${arr.map(t=>`<div class="rcell" onclick="viewPhoto('${t.photo}')"><img data-ph="${t.photo}" alt=""><small>${U(t.note||t.cat||'')}<br>${t.date}</small></div>`).join('')}</div>`})
   }else h=`<div class="empty">${tr('مفيش إيصالات لسه')}</div>`;
-  openPick(tr('الإيصالات'),`<div class="g">${h}</div>`);
+  const ex=items.length?`<div class="g" style="display:flex;gap:8px"><button class="btn" style="flex:1" onclick="exportReceiptsCSV()">📊 ${tr('تصدير Excel')}</button><button class="btn s" style="flex:1" onclick="exportReceiptsPDF()">📄 ${tr('تصدير PDF')}</button></div>`:'';
+  openPick(tr('الإيصالات'),`${ex}<div class="g">${h}</div>`);
   setTimeout(loadThumbs,30);
 }
 function netWorthCard(){
@@ -2591,7 +2660,7 @@ function profHTML(){const m=PMget();
   return `<div class="g"><div class="sec" style="margin-top:0">${tr('الملفات')}</div>${m.list.map(x=>`<div class="row"><div class="ic">${x.id===m.active?'✅':'👤'}</div><div class="m" ${x.id===m.active?'':`onclick="profSwitch('${x.id}')" style="cursor:pointer"`}><b>${U(x.name)}</b><small>${x.id===m.active?tr('الملف الحالي'):tr('اضغط للتبديل')}</small></div><button class="chip" onclick="profRename('${x.id}')">✏️</button>${x.id===m.active?'':`<button class="del" onclick="profDel('${x.id}')">🗑</button>`}</div>`).join('')}
   <input id="pf-name" placeholder="${tr('اسم الملف الجديد (مثال: زوجتي)')}" style="margin-top:10px"><button class="btn" style="width:100%" onclick="profAdd()">➕ ${tr('إضافة ملف جديد')}</button></div>${profFamily()}`}
 
-Object.assign(EN,{'توقع نهاية الشهر':'End-of-month forecast','سجّل كام عملية كمان وهنقدر نتوقع لك':'Log a few more transactions and we will forecast for you','متوسط صرفك اليومي':'Your daily average','الحد الآمن يوميًا':'Safe daily limit','على سرعتك الحالية هيفضل معاك حوالي':'At your current pace you will have about','في آخر الشهر':'left at month end','الفلوس الحالية مش هتكفي الالتزامات الجاية (فواتير واشتراكات)':'Your money will not cover upcoming commitments (bills & subscriptions)','الفلوس هتخلص تقريبًا يوم':'Your money will run out around','قبل آخر الشهر بـ':'before month end by','الاشتراكات':'Subscriptions','إجمالي الاشتراكات شهريًا':'Total subscriptions per month','في السنة':'Per year','لسه مفيش اشتراكات':'No subscriptions yet','اشتراك جديد':'New subscription','اسم الاشتراك (مثال: نتفليكس)':'Subscription name (e.g. Netflix)','اسم الاشتراك':'Subscription name','تاريخ التجديد الجاي':'Next renewal date','إضافة اشتراك':'Add subscription','اكتب الاسم والمبلغ وتاريخ التجديد':'Enter name, amount and renewal date','شهري':'Monthly','سنوي':'Yearly','الدورة':'Cycle','دفعت':'Paid','متأخر':'Overdue','النهارده':'Today','بكرة':'Tomorrow','بعد':'in','تعديل الاشتراك':'Edit subscription','مسح الاشتراك':'Delete subscription','تمسح الاشتراك ده؟':'Delete this subscription?','اتأخر تجديده':'Renewal is overdue','بيتجدد النهارده':'Renews today','بيتجدد بكرة':'Renews tomorrow','بيتجدد بعد':'Renews in','الديون والسلف':'Debts & loans','أشخاص':'people','ليك':'You are owed','عليك':'You owe','ليك عند الناس':'Owed to you','عليك للناس':'You owe','ليك عنده':'owes you','عليك له':'you owe him','متعادلين':'Settled','مفيش ديون ولا سلف مفتوحة 🎉':'No open debts or loans 🎉','دين عليك':'Debt you owe','سلفة ليك':'Loan you gave','الأصلي':'Original','الميعاد':'Due date','سدّدت':'Paid back','استرجعت':'Got it back','ذكّره':'Remind','رجوع':'Back','عملية':'transaction','متأخرة':'Overdue','قاعدة تقسيم الدخل':'Income split rule','احتياجات / رغبات / ادخار':'Needs / Wants / Savings','الدخل المعتمد':'Income used','احتياجات':'Needs','رغبات':'Wants','ادخار':'Savings','سجّل دخلك أو المرتب عشان نحسب النسب':'Log your income or salary so we can calculate','مجموع النسب لازم يبقى 100':'Percentages must add up to 100','اختار الرغبات (الباقي احتياجات)':'Pick your wants (the rest are needs)','طبّق على ميزانيات البنود':'Apply to category budgets','ده هيستبدل ميزانيات البنود الحالية. تكمل؟':'This will replace your current category budgets. Continue?','تم تطبيق الميزانيات ✅':'Budgets applied ✅','الإيصال':'Receipt','الإيصالات':'Receipts','إيصال':'receipts','تعديل العملية':'Edit transaction','مسح الإيصال':'Delete receipt','تمسح الإيصال ده؟':'Delete this receipt?','الإيصال مرفوع ✓':'Receipt attached ✓','الملفات والعائلة':'Profiles & family','الملفات':'Profiles','الملف الحالي':'Current profile','اضغط للتبديل':'Tap to switch','اسم الملف':'Profile name','اسم الملف الجديد (مثال: زوجتي)':'New profile name (e.g. My wife)','إضافة ملف جديد':'Add new profile','اكتب اسم الملف':'Enter a profile name','هتمسح الملف ده وكل بياناته. تكمل؟':'This will delete the profile and all its data. Continue?','أضف ملف تاني (زوجة، ابن...) عشان تشوف تقرير العيلة المجمّع':'Add another profile (spouse, child...) to see the combined family report','تقرير العيلة':'Family report','تعذّر التبديل':'Could not switch','ملخص الديون والسلف':'Debts & loans summary','قوائم السلف والديون':'Loan & debt lists','تنبيه الاشتراكات':'Subscription alerts'});
+Object.assign(EN,{'توقع نهاية الشهر':'End-of-month forecast','سجّل كام عملية كمان وهنقدر نتوقع لك':'Log a few more transactions and we will forecast for you','متوسط صرفك اليومي':'Your daily average','الحد الآمن يوميًا':'Safe daily limit','على سرعتك الحالية هيفضل معاك حوالي':'At your current pace you will have about','في آخر الشهر':'left at month end','الفلوس الحالية مش هتكفي الالتزامات الجاية (فواتير واشتراكات)':'Your money will not cover upcoming commitments (bills & subscriptions)','الفلوس هتخلص تقريبًا يوم':'Your money will run out around','قبل آخر الشهر بـ':'before month end by','الاشتراكات':'Subscriptions','إجمالي الاشتراكات شهريًا':'Total subscriptions per month','في السنة':'Per year','لسه مفيش اشتراكات':'No subscriptions yet','اشتراك جديد':'New subscription','اسم الاشتراك (مثال: نتفليكس)':'Subscription name (e.g. Netflix)','اسم الاشتراك':'Subscription name','تاريخ التجديد الجاي':'Next renewal date','إضافة اشتراك':'Add subscription','اكتب الاسم والمبلغ وتاريخ التجديد':'Enter name, amount and renewal date','شهري':'Monthly','سنوي':'Yearly','الدورة':'Cycle','دفعت':'Paid','متأخر':'Overdue','النهارده':'Today','بكرة':'Tomorrow','بعد':'in','تعديل الاشتراك':'Edit subscription','مسح الاشتراك':'Delete subscription','تمسح الاشتراك ده؟':'Delete this subscription?','اتأخر تجديده':'Renewal is overdue','بيتجدد النهارده':'Renews today','بيتجدد بكرة':'Renews tomorrow','بيتجدد بعد':'Renews in','الديون والسلف':'Debts & loans','أشخاص':'people','ليك':'You are owed','عليك':'You owe','ليك عند الناس':'Owed to you','عليك للناس':'You owe','ليك عنده':'owes you','عليك له':'you owe him','متعادلين':'Settled','مفيش ديون ولا سلف مفتوحة 🎉':'No open debts or loans 🎉','دين عليك':'Debt you owe','سلفة ليك':'Loan you gave','الأصلي':'Original','الميعاد':'Due date','سدّدت':'Paid back','استرجعت':'Got it back','ذكّره':'Remind','رجوع':'Back','عملية':'transaction','متأخرة':'Overdue','قاعدة تقسيم الدخل':'Income split rule','احتياجات / رغبات / ادخار':'Needs / Wants / Savings','الدخل المعتمد':'Income used','احتياجات':'Needs','رغبات':'Wants','ادخار':'Savings','سجّل دخلك أو المرتب عشان نحسب النسب':'Log your income or salary so we can calculate','مجموع النسب لازم يبقى 100':'Percentages must add up to 100','اختار الرغبات (الباقي احتياجات)':'Pick your wants (the rest are needs)','طبّق على ميزانيات البنود':'Apply to category budgets','ده هيستبدل ميزانيات البنود الحالية. تكمل؟':'This will replace your current category budgets. Continue?','تم تطبيق الميزانيات ✅':'Budgets applied ✅','الإيصال':'Receipt','الإيصالات':'Receipts','إيصال':'receipts','تعديل العملية':'Edit transaction','مسح الإيصال':'Delete receipt','تمسح الإيصال ده؟':'Delete this receipt?','الإيصال مرفوع ✓':'Receipt attached ✓','الحسابات والعائلة':'Profiles & family','الملفات':'Profiles','الملف الحالي':'Current profile','اضغط للتبديل':'Tap to switch','اسم الملف':'Profile name','اسم الملف الجديد (مثال: زوجتي)':'New profile name (e.g. My wife)','إضافة ملف جديد':'Add new profile','اكتب اسم الملف':'Enter a profile name','هتمسح الملف ده وكل بياناته. تكمل؟':'This will delete the profile and all its data. Continue?','أضف ملف تاني (زوجة، ابن...) عشان تشوف تقرير العيلة المجمّع':'Add another profile (spouse, child...) to see the combined family report','تقرير العيلة':'Family report','تعذّر التبديل':'Could not switch','ملخص الديون والسلف':'Debts & loans summary','قوائم السلف والديون':'Loan & debt lists','تنبيه الاشتراكات':'Subscription alerts'});
 try{Object.keys(TRL).forEach(k=>delete TRL[k]);render()}catch(e){}
 </script>
 <script>
@@ -2611,5 +2680,6 @@ Object.assign(EN,{'الاشتراكات القادمة':'Upcoming subscriptions'
 try{Object.keys(TRL).forEach(k=>delete TRL[k])}catch(e){}
 </script>
 <script>/* undo starts from the state the app opened with */ if(!_hist.length)_hist.push(JSON.stringify(S));</script>
+<script>setTimeout(ramCheck,1800);matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(S.theme==='auto')applyTheme()});</script>
 </body>
 </html>
