@@ -28,7 +28,7 @@ jobs:
 
       - name: Install Capacitor and plugins
         working-directory: masrofaty-android
-        run: npm install --legacy-peer-deps @capacitor/core @capacitor/cli @capacitor/android @capacitor/app-launcher @capacitor/filesystem @capacitor/share @capacitor/app @capacitor/status-bar @aparajita/capacitor-biometric-auth @capacitor/local-notifications
+        run: npm install --legacy-peer-deps @capacitor/core @capacitor/cli @capacitor/android @capacitor/app-launcher @capacitor/filesystem @capacitor/share @capacitor/app @capacitor/status-bar @aparajita/capacitor-biometric-auth @capacitor/local-notifications capacitor-voice-recorder
 
       - name: Check project files
         working-directory: masrofaty-android
@@ -46,6 +46,17 @@ jobs:
         working-directory: masrofaty-android
         run: npx cap sync android
 
+      - name: Add microphone permission to the Android app
+        working-directory: masrofaty-android/android/app/src/main
+        run: |
+          grep -q 'android.permission.RECORD_AUDIO' AndroidManifest.xml || sed -i 's#<manifest xmlns:android="http://schemas.android.com/apk/res/android">#&\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />#' AndroidManifest.xml
+          grep -n "RECORD_AUDIO" AndroidManifest.xml || echo "WARNING: microphone permission not added"
+
+      - name: Check voice recorder plugin is installed
+        working-directory: masrofaty-android
+        run: |
+          test -d node_modules/capacitor-voice-recorder && echo "voice plugin OK" || echo "WARNING: voice plugin missing"
+
       - name: Force English app name on the phone
         working-directory: masrofaty-android/android
         run: |
@@ -59,6 +70,13 @@ jobs:
         run: |
           mkdir -p ~/.android
           cp android-debug.keystore ~/.android/debug.keystore
+
+      - name: Set the app version from the build number
+        working-directory: masrofaty-android/android/app
+        run: |
+          sed -i -E "s/versionCode [0-9]+/versionCode ${{ github.run_number }}/" build.gradle
+          sed -i -E "s/versionName \"[^\"]*\"/versionName \"1.${{ github.run_number }}\"/" build.gradle
+          grep -nE "versionCode|versionName" build.gradle
 
       - name: Build debug APK
         working-directory: masrofaty-android/android
