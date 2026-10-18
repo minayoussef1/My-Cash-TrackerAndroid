@@ -765,6 +765,13 @@ label.srow input[type=date]{max-width:60%;text-align:end;direction:ltr}
 #s-set .sgrp .srow:nth-child(6){animation-delay:.2s}
 #s-set .sgrp .srow:nth-child(7){animation-delay:.24s}
 #s-set .sgrp .srow:nth-child(8){animation-delay:.28s}
+
+.stylePick{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.styleCard{border:1px solid var(--line);border-radius:22px;background:var(--glass);color:var(--text);padding:18px 12px;display:flex;flex-direction:column;align-items:center;gap:6px;font:inherit;cursor:pointer;box-shadow:var(--shadow-card);transition:transform .2s}
+.styleCard:active{transform:scale(.97)}
+.styleCard b{font-size:17px}
+.styleCard small{color:var(--mut);font-size:12px;text-align:center;line-height:1.4}
+.scIc{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -946,7 +953,8 @@ const EN={
 'المظهر':'Appearance','خصص شكل التطبيق حسب ذوقك':'Customise the look of the app','الواجهة الزجاجية':'Glass interface','لون واجهة التطبيق':'App interface colour','الألوان':'Colours','النمط':'Mode','غامق':'Dark','غامق زجاجي':'Dark glass','فاتح زجاجي':'Light glass','الإعدادات':'Settings',
 'تخصيص الألوان':'Colour customisation','اختار لونين':'Pick two colours','اختار لونين وشوف التدرج على التطبيق':'Pick two colours and see the gradient across the app',
 'مزج لونين':'Mix two colours','لون واحد للنظام كله · اضغط مزج لونين لو عايز تدرج':'One colour for the whole app · turn on mix for a gradient','اختار لون من تحت، أو فعّل مزج لونين':'Pick a colour below, or turn on mixing',
-'الحسابات والعائلة':'Accounts & family','إمكانيات جهازك':'Your device','انت رام كام في الموبايل؟ هنضبط الشكل على حسب الجهاز':'How much RAM does your phone have? We will set the look for your device','من 1 لـ 4 جيجا':'1 to 4 GB','من 6 لـ 12 جيجا':'6 to 12 GB','أكتر من 12 جيجا':'More than 12 GB','تم ضبط الشكل تلقائي':'Look set to automatic','تصدير Excel':'Export Excel','تصدير PDF':'Export PDF','جاري تجهيز الملف...':'Preparing the file...'
+'الحسابات والعائلة':'Accounts & family','إمكانيات جهازك':'Your device','انت رام كام في الموبايل؟ هنضبط الشكل على حسب الجهاز':'How much RAM does your phone have? We will set the look for your device','من 1 لـ 4 جيجا':'1 to 4 GB','من 6 لـ 12 جيجا':'6 to 12 GB','أكتر من 12 جيجا':'More than 12 GB','تم ضبط الشكل تلقائي':'Look set to automatic','تصدير Excel':'Export Excel','تصدير PDF':'Export PDF','جاري تجهيز الملف...':'Preparing the file...',
+'شكل التطبيق':'App style','اختار الشكل اللي يعجبك، وتقدر تغيّره وقت ما تحب من الإعدادات ← المظهر':'Pick the style you like. You can change it anytime in Settings → Appearance','عادي':'Plain','زجاجي':'Glass','ألوان واضحة وهادية':'Clear, calm colours','شفاف وفخم بتأثير الزجاج':'Transparent and premium with a glass effect','تمام، تقدر تعدل أكتر من الإعدادات ← المظهر':'Done. You can change more in Settings → Appearance'
 };
 const isRTL=()=>S.lang==='ar';
 const CUR=()=>S.cur||curOf();
@@ -1484,8 +1492,8 @@ function setCustomAcc(){const a=$('#ca1').value,b=$('#ca2').value;if(!/^#[0-9a-f
 try{matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>{if(S.theme==='auto')applyTheme()})}catch(e){}
 function setTheme(t){S.theme=t;save();applyTheme();setScr()}
 
-function openRam(){openPick(tr('إمكانيات جهازك'),`<div class="g"><p style="line-height:1.7;margin:0 0 10px">${tr('انت رام كام في الموبايل؟ هنضبط الشكل على حسب الجهاز')}</p><button class="btn" style="width:100%;margin-top:6px" onclick="setRam('low')">${tr('من 1 لـ 4 جيجا')}</button><button class="btn" style="width:100%;margin-top:8px" onclick="setRam('high')">${tr('من 6 لـ 12 جيجا')}</button><button class="btn s" style="width:100%;margin-top:8px" onclick="setRam('high')">${tr('أكتر من 12 جيجا')}</button></div>`)}
-function setRam(k){S.ramAsked=true;S.ramLow=k==='low';S.glassAuto=k!=='low';S.theme='auto';save();applyTheme();closeSheet();try{render()}catch(e){}toast(tr('تم ضبط الشكل تلقائي'))}
+function openRam(){openPick(tr('شكل التطبيق'),`<div class="g"><p style="line-height:1.7;margin:0 0 12px;color:var(--mut)">${tr('اختار الشكل اللي يعجبك، وتقدر تغيّره وقت ما تحب من الإعدادات ← المظهر')}</p><div class="stylePick"><button class="styleCard" onclick="setRam('plain')"><span class="scIc">▢</span><b>${tr('عادي')}</b><small>${tr('ألوان واضحة وهادية')}</small></button><button class="styleCard" onclick="setRam('glass')"><span class="scIc">◈</span><b>${tr('زجاجي')}</b><small>${tr('شفاف وفخم بتأثير الزجاج')}</small></button></div></div>`)}
+function setRam(k){S.ramAsked=true;S.ramLow=false;S.glassAuto=k==='glass';S.theme='auto';save();applyTheme();closeSheet();try{render()}catch(e){}toast(tr('تمام، تقدر تعدل أكتر من الإعدادات ← المظهر'))}
 function ramCheck(){if(S.ramAsked||!S.done)return;if(document.querySelector('#ob.on,#tour.on')){setTimeout(ramCheck,1500);return}openRam()}
 function setLite(v){S.lite=v;save();applyTheme();setScr()}
 const f=x=>Math.round(x*100/100).toLocaleString(P().arNums?'ar-EG':'en-US');
