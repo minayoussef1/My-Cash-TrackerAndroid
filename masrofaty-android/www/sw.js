@@ -1,4 +1,4 @@
-const CACHE = 'my-cash-v1';
+const CACHE = 'my-cash-v2';
 const FILES = [
   './',
   './index.html',
@@ -7,7 +7,11 @@ const FILES = [
   './icon-192.png',
   './icon-512.png',
   './icon.svg',
-  './fonts/PingAR-Medium.ttf'
+  './fonts/PingAR-Medium.ttf',
+  './fonts/Arslan-Wessam-B.ttf',
+  './fonts/AdobeNaskh-Regular.ttf',
+  './fonts/Omnes-Arabic-Medium.ttf',
+  './fonts/Arial-IOS15.ttf'
 ];
 
 self.addEventListener('install', e => {
