@@ -21,14 +21,14 @@ jobs:
           node-version: '20'
 
       - name: Setup Java
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: 'temurin'
           java-version: '21'
 
       - name: Install Capacitor and plugins
         working-directory: masrofaty-android
-        run: npm install --legacy-peer-deps @capacitor/core @capacitor/cli @capacitor/android @capacitor/app-launcher @capacitor/filesystem @capacitor/share @capacitor/app @capacitor/status-bar @aparajita/capacitor-biometric-auth @capacitor/local-notifications capacitor-voice-recorder
+        run: npm install --legacy-peer-deps @capacitor/core @capacitor/cli @capacitor/android @capacitor/app-launcher @capacitor/filesystem @capacitor/share @capacitor/app @capacitor/status-bar @aparajita/capacitor-biometric-auth @capacitor/local-notifications capacitor-voice-recorder @capacitor-community/speech-recognition
 
       - name: Check project files
         working-directory: masrofaty-android
@@ -51,6 +51,17 @@ jobs:
         run: |
           grep -q 'android.permission.RECORD_AUDIO' AndroidManifest.xml || sed -i 's#<manifest xmlns:android="http://schemas.android.com/apk/res/android">#&\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />#' AndroidManifest.xml
           grep -n "RECORD_AUDIO" AndroidManifest.xml || echo "WARNING: microphone permission not added"
+
+      - name: Allow speech recognition service (Android 11+)
+        working-directory: masrofaty-android/android/app/src/main
+        run: |
+          grep -q 'android.speech.RecognitionService' AndroidManifest.xml || sed -i 's#</manifest>#    <queries>\n        <intent>\n            <action android:name="android.speech.RecognitionService" />\n        </intent>\n    </queries>\n</manifest>#' AndroidManifest.xml
+          grep -n "RecognitionService" AndroidManifest.xml || echo "WARNING: speech service query not added"
+
+      - name: Check speech recognition plugin is installed
+        working-directory: masrofaty-android
+        run: |
+          test -d node_modules/@capacitor-community/speech-recognition && echo "speech plugin OK" || echo "WARNING: speech plugin missing"
 
       - name: Check voice recorder plugin is installed
         working-directory: masrofaty-android
