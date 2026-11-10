@@ -1,4 +1,4 @@
-const CACHE = 'my-cash-v9';
+const CACHE = 'my-cash-v11';
 const FILES = [
   './',
   './index.html',
