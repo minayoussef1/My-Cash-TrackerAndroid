@@ -899,6 +899,7 @@ html[lang="en"] body{font-family:var(--ffE,system-ui),var(--ffA,'PingAR')!import
 .vbd{background:rgba(var(--accrgb),.14);color:var(--acc);border-radius:10px;padding:8px 9px;font-size:12px;font-weight:700;flex:none;white-space:nowrap}
 .vper{flex:1;min-width:0;margin:0!important}.vtx{padding:0 4px;color:var(--text);font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .vbad{display:block;color:#f43f5e;font-size:12px;margin:3px 4px 0}
+.vediag{font-size:10.5px;color:var(--mut);opacity:.7;direction:ltr;text-align:center;word-break:break-all;min-height:0}
 </style>
 </head>
 <body>
@@ -1546,7 +1547,7 @@ function veItemsHTML(){
 function veRender(){
   const wl=S.wallets.length>1?`<div class="srow" style="cursor:default">${aic('wal')}<span class="sl">${tr('المحفظة')}</span><select class="sin" onchange="VE.w=this.value">${S.wallets.map(w=>`<option value="${w.id}" ${w.id===VE.w?'selected':''}>${w.ico} ${wn(w)}</option>`).join('')}</select></div>`:'';
   const dl=VE.date!==iso(new Date())?`<div class="srow" style="cursor:default">${aic('cal')}<span class="sl">${tr('التاريخ')}</span><em>${VE.date}</em></div>`:'';
-  openPick('🎙 '+tr('سجّل بصوتك'),`<div class="vetop"><button class="vemic ${VE.listening?'on':''}" onclick="${VE.listening?'veStop()':'veStart()'}" aria-label="mic">${aic('mic')}</button><div class="vest" id="ve-st">${VE.err?tr(VE.err):VE.listening?tr('سامعك... اتكلم'):tr('دوس على الميكروفون وقول العملية')}</div></div>
+  openPick('🎙 '+tr('سجّل بصوتك'),`<div class="vetop"><button class="vemic ${VE.listening?'on':''}" onclick="${VE.listening?'veStop()':'veStart()'}" aria-label="mic">${aic('mic')}</button><div class="vediag" id="ve-diag">${esc((VE.diag||[]).join(' · '))}</div><div class="vest" id="ve-st">${VE.err?tr(VE.err):VE.listening?tr('سامعك... اتكلم'):tr('دوس على الميكروفون وقول العملية')}</div></div>
   <input id="ve-t" class="vet" placeholder="${tr('أو اكتب هنا / استخدم ميكروفون الكيبورد')}" value="${esc(VE.text)}" oninput="veReparse()">
   <div id="ve-items">${veItemsHTML()}</div>
   <div class="sgrp" style="margin-top:10px">${wl}${dl}<div class="srow" style="cursor:default">${aic('repeat')}<span class="sl">${tr('حفظ تلقائي بدون تأكيد')}</span><button class="sw2 ${S.voiceAuto?'on':''}" onclick="S.voiceAuto=!S.voiceAuto;save();this.classList.toggle('on')" aria-label="auto"><i></i></button></div></div>
@@ -1563,19 +1564,25 @@ function veSetStatus(m){const e=$('#ve-st');if(e)e.textContent=tr(m)}
 function veDone(){if(!VE.listening)return;VE.listening=false;const m=document.querySelector('.vemic');if(m){m.classList.remove('on');m.setAttribute('onclick','veStart()')}veParseNow();
   if(VE.items.length&&S.voiceAuto&&VE.items.every(x=>x.amt>0)){veSave();return}
   veSetStatus(VE.items.length?'راجع وادوس حفظ':'مفهمتش، جرّب تاني أو اكتب')}
-function veFail(code){VE.listening=false;const M={NotAllowedError:'الميكروفون مقفول للتطبيق. فعّله من إعدادات الموبايل ← التطبيقات ← My Cash ← الأذونات.','not-allowed':'الميكروفون مقفول للتطبيق. فعّله من إعدادات الموبايل ← التطبيقات ← My Cash ← الأذونات.','service-not-allowed':'خدمة التعرف على الصوت مش متاحة على الموبايل ده.',unsupported:'التعرف على الصوت مش مدعوم هنا. اكتب العملية، أو استخدم ميكروفون الكيبورد، وهفهمها برضه.','no-speech':'مسمعتش حاجة، جرّب تاني.','network':'محتاج إنترنت علشان يفهم الصوت.'};
+function veFail(code){VE.listening=false;const M={NotAllowedError:'الميكروفون مقفول للتطبيق. فعّله من إعدادات الموبايل ← التطبيقات ← My Cash ← الأذونات.','not-allowed':'الميكروفون مقفول للتطبيق. فعّله من إعدادات الموبايل ← التطبيقات ← My Cash ← الأذونات.','service-not-allowed':'خدمة التعرف على الصوت مش متاحة على الموبايل ده.',unsupported:'التعرف على الصوت مش مدعوم هنا. اكتب العملية، أو استخدم ميكروفون الكيبورد، وهفهمها برضه.',noplugin:'الـ APK ده مفيهوش مكتبة التعرف على الصوت. ارفع build-apk.yml الجديد وابنِ تاني. وفي الوقت ده اكتب العملية أو استخدم ميكروفون الكيبورد.','no-speech':'مسمعتش حاجة، جرّب تاني.','network':'محتاج إنترنت علشان يفهم الصوت.'};
   VE.err=M[code]||'حصلت مشكلة في الصوت، اكتب العملية بدل كده.';const m=document.querySelector('.vemic');if(m){m.classList.remove('on');m.setAttribute('onclick','veStart()')}veSetStatus(VE.err)}
+function veDiag(m){VE.diag=(VE.diag||[]);VE.diag.push(m);const e=$('#ve-diag');if(e)e.textContent=VE.diag.join(' · ')}
 async function veStart(){
-  if(VE.listening)return;VE.err='';VE.listening=true;VE.text='';VE.items=[];veRender();
-  const P=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.SpeechRecognition;
-  if(P){try{const a=await P.available();if(!a||!a.available){veFail('unsupported');return}
-      let pr=await P.checkPermissions();if(!pr||pr.speechRecognition!=='granted')pr=await P.requestPermissions();
-      if(!pr||pr.speechRecognition!=='granted'){veFail('NotAllowedError');return}
-      try{await P.removeAllListeners()}catch(e){}
-      await P.addListener('partialResults',d=>{VE.text=(d&&d.matches&&d.matches[0])||VE.text;veLive()});
-      await P.addListener('listeningState',d=>{if(d&&d.status==='stopped')veDone()});
-      await P.start({language:'ar-EG',maxResults:3,prompt:'',partialResults:true,popup:false})}
-    catch(e){veFail((e&&(e.message||e.code))||'error')}return}
+  if(VE.listening)return;VE.err='';VE.diag=[];VE.listening=true;VE.text='';VE.items=[];veRender();
+  const C=window.Capacitor,native=!!(C&&C.isNativePlatform&&C.isNativePlatform()),P=C&&C.Plugins&&C.Plugins.SpeechRecognition;
+  veDiag(native?'native':'web');veDiag(P?'plugin:yes':'plugin:no');
+  if(P){
+    try{try{const pr=await P.checkPermissions();veDiag('perm:'+(pr&&pr.speechRecognition));if(!pr||pr.speechRecognition!=='granted'){const r=await P.requestPermissions();veDiag('perm→'+(r&&r.speechRecognition))}}catch(e){veDiag('perm-err')}
+      try{const a=await P.available();veDiag('avail:'+(a&&a.available))}catch(e){veDiag('avail-err')}
+      // system speech dialog: most reliable inside a WebView app
+      const r=await P.start({language:'ar-EG',maxResults:3,prompt:'قول العملية، مثلاً: صرفت خمسين جنيه مواصلات',partialResults:false,popup:true});
+      const m=r&&r.matches&&r.matches[0];veDiag(m?'got-text':'no-text');
+      if(m){VE.text=m;const t=$('#ve-t');if(t)t.value=m}
+      veDone();
+    }catch(e){const msg=String((e&&(e.message||e.code))||e||'error');veDiag('err:'+msg.slice(0,60));
+      veFail(/permission|denied|not.?allowed/i.test(msg)?'NotAllowedError':/cancel|no match|no speech|NO_MATCH|SPEECH_TIMEOUT/i.test(msg)?'no-speech':'error')}
+    return}
+  if(native){veFail('noplugin');return}
   const W=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(W){try{const r=new W();r.lang='ar-EG';r.interimResults=true;r.continuous=false;
       r.onresult=e=>{let t='';for(const x of e.results)t+=x[0].transcript+' ';VE.text=t.trim();veLive()};
