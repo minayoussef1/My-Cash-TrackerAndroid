@@ -26,11 +26,18 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      - name: Install Capacitor and plugins
+      - name: Check lock file exists
         working-directory: masrofaty-android
-        run: npm install --legacy-peer-deps @capacitor/core @capacitor/cli @capacitor/android @capacitor/app-launcher @capacitor/filesystem @capacitor/share @capacitor/app @capacitor/status-bar @aparajita/capacitor-biometric-auth @capacitor/local-notifications capacitor-voice-recorder @capacitor-community/speech-recognition
+        run: |
+          test -f package.json || { echo "ERROR: package.json missing"; exit 1; }
+          test -f package-lock.json || { echo "ERROR: package-lock.json missing"; exit 1; }
+          echo "lock file OK"
 
-      - name: Print installed versions (for pinning)
+      - name: Install pinned dependencies
+        working-directory: masrofaty-android
+        run: npm ci --legacy-peer-deps
+
+      - name: Print installed versions
         working-directory: masrofaty-android
         run: |
           echo "===== INSTALLED VERSIONS ====="
