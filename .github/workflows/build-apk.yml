@@ -30,6 +30,13 @@ jobs:
         working-directory: masrofaty-android
         run: npm install --legacy-peer-deps @capacitor/core @capacitor/cli @capacitor/android @capacitor/app-launcher @capacitor/filesystem @capacitor/share @capacitor/app @capacitor/status-bar @aparajita/capacitor-biometric-auth @capacitor/local-notifications capacitor-voice-recorder @capacitor-community/speech-recognition
 
+      - name: Print installed versions (for pinning)
+        working-directory: masrofaty-android
+        run: |
+          echo "===== INSTALLED VERSIONS ====="
+          npm ls --depth=0 || true
+          echo "===== END VERSIONS ====="
+
       - name: Check project files
         working-directory: masrofaty-android
         run: |
@@ -50,23 +57,27 @@ jobs:
         working-directory: masrofaty-android/android/app/src/main
         run: |
           grep -q 'android.permission.RECORD_AUDIO' AndroidManifest.xml || sed -i 's#<manifest xmlns:android="http://schemas.android.com/apk/res/android">#&\n    <uses-permission android:name="android.permission.RECORD_AUDIO" />#' AndroidManifest.xml
-          grep -n "RECORD_AUDIO" AndroidManifest.xml || echo "WARNING: microphone permission not added"
+          grep -q 'android.permission.RECORD_AUDIO' AndroidManifest.xml || { echo "ERROR: microphone permission not added"; exit 1; }
+          grep -n "RECORD_AUDIO" AndroidManifest.xml
 
       - name: Allow speech recognition service (Android 11+)
         working-directory: masrofaty-android/android/app/src/main
         run: |
           grep -q 'android.speech.RecognitionService' AndroidManifest.xml || sed -i 's#</manifest>#    <queries>\n        <intent>\n            <action android:name="android.speech.RecognitionService" />\n        </intent>\n    </queries>\n</manifest>#' AndroidManifest.xml
-          grep -n "RecognitionService" AndroidManifest.xml || echo "WARNING: speech service query not added"
+          grep -q 'android.speech.RecognitionService' AndroidManifest.xml || { echo "ERROR: speech service query not added"; exit 1; }
+          grep -n "RecognitionService" AndroidManifest.xml
 
       - name: Check speech recognition plugin is installed
         working-directory: masrofaty-android
         run: |
-          test -d node_modules/@capacitor-community/speech-recognition && echo "speech plugin OK" || echo "WARNING: speech plugin missing"
+          test -d node_modules/@capacitor-community/speech-recognition || { echo "ERROR: speech plugin missing"; exit 1; }
+          echo "speech plugin OK"
 
       - name: Check voice recorder plugin is installed
         working-directory: masrofaty-android
         run: |
-          test -d node_modules/capacitor-voice-recorder && echo "voice plugin OK" || echo "WARNING: voice plugin missing"
+          test -d node_modules/capacitor-voice-recorder || { echo "ERROR: voice plugin missing"; exit 1; }
+          echo "voice plugin OK"
 
       - name: Force English app name on the phone
         working-directory: masrofaty-android/android
