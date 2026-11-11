@@ -1522,7 +1522,74 @@ function vLearnedWallet(words){const L=(S.vlearnW)||{};for(const w of words){if(
 function vLearned(words){const L=(S.vlearn)||{};for(const w of words){if(L[w])return L[w]}return null}
 function vOpenFor(kind,person){const list=(typeof openOf==='function'?openOf(kind==='repay'?'loan':'borrow'):[])||[],p=vNorm(person);
   return list.filter(l=>{const n=vNorm(l.note);return p&&(n===p||n.includes(p)||p.includes(n))})[0]||null}
+function vLang(){return S.lang==='en'?'en-US':'ar-EG'}
+function vPrompt(){return S.lang==='en'?'Say the transaction, e.g. spent fifty dollars on lunch':'قول العملية، مثلاً: صرفت خمسين جنيه مواصلات'}
+const V_EN_NUM={zero:0,one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10,eleven:11,twelve:12,thirteen:13,fourteen:14,fifteen:15,sixteen:16,seventeen:17,eighteen:18,nineteen:19,twenty:20,thirty:30,forty:40,fifty:50,sixty:60,seventy:70,eighty:80,ninety:90};
+const V_EN_CATS=[['أكل',/\b(coffee|lunch|dinner|breakfast|food|restaurant|groceries|grocery|pizza|burger|snacks?|meals?|supermarket|cafe)\b/],['فواتير',/\b(bills?|internet|electricity|water|wifi|rent|phone|subscriptions?|utilities)\b/],['مواصلات',/\b(uber|taxi|bus|metro|gas|fuel|transport|parking|train|careem|ride)\b/],['صحة',/\b(doctor|pharmacy|medicine|hospital|gym|dentist|clinic|health)\b/],['ترفيه',/\b(movies?|netflix|games?|concert|cinema|party|spotify)\b/],['تعليم',/\b(courses?|books?|tuition|school|university|classes?)\b/],['تسوق',/\b(shopping|clothes|shoes|amazon|mall|store|shirts?)\b/]];
+const V_EN_INC=[['مرتب',/\b(salary|paycheck|payroll)\b/],['شغل إضافي',/\b(freelance|side job|extra work|overtime|bonus)\b/],['هدية',/\bgifts?\b/]];
+const V_EN_FILLER=new RegExp('\\b(i|spent|paid|bought|buy|on|for|at|from|with|cash|card|received|earned|got|deposited|today|yesterday|my|the|a|an|to|dollars?|bucks|usd|pounds?|egp|euros?|hundred|thousand|million|'+Object.keys(V_EN_NUM).join('|')+')\\b','g');
+function vEnAmount(t){
+  const m=t.match(/\d+(?:\.\d+)?/);if(m)return parseFloat(m[0]);
+  let total=0,cur=0,hit=false;
+  for(const w of t.split(/\s+/)){
+    if(w in V_EN_NUM){cur+=V_EN_NUM[w];hit=true}
+    else if(w==='hundred'){cur=(cur||1)*100;hit=true}
+    else if(w==='thousand'){total+=(cur||1)*1000;cur=0;hit=true}
+    else if(w==='million'){total+=(cur||1)*1000000;cur=0;hit=true}
+    else if(hit&&w!=='and')break;
+  }
+  return hit?total+cur:0;
+}
+function vEnIntent(c){
+  if(/\bborrowed\b/.test(c))return'borrow';
+  if(/\b(lent|loaned)\b/.test(c))return'loan';
+  if(/\b(paid me back|repaid me|gave me back)\b/.test(c))return'repay';
+  if(/\b(paid back|repaid|returned)\b/.test(c))return'payback';
+  if(/\b(saved|save|set aside|put aside)\b/.test(c))return'save';
+  if(/\b(received|got paid|earned|income|salary|deposited|paycheck)\b/.test(c))return'income';
+  return'expense';
+}
+function vEnPerson(c,kind){
+  const stop=new Set(['me','to','from','my','the','a','an','back','and',...Object.keys(V_EN_NUM),'hundred','thousand']);
+  let m=null;
+  if(kind==='loan')m=c.match(/\bto\s+([a-z]+)/)||c.match(/\b(?:lent|loaned)\s+([a-z]+)/);
+  else if(kind==='borrow')m=c.match(/\bfrom\s+([a-z]+)/);
+  else if(kind==='repay')m=c.match(/\b([a-z]+)\s+(?:paid me back|repaid me|gave me back)/);
+  else if(kind==='payback')m=c.match(/\b(?:paid back|repaid|returned)\s+(?:to\s+)?([a-z]+)/);
+  if(m&&stop.has(m[1])){const r=c.match(/\b(?:to|from)\s+([a-z]+)/g);m=null;if(r){const q=r.map(x=>x.split(/\s+/)[1]).find(x=>!stop.has(x));if(q)m=[q,q]}}
+  const w=m&&!stop.has(m[1])?m[1]:'';
+  return w?w.charAt(0).toUpperCase()+w.slice(1):'';
+}
+function vParseEN(text){
+  const raw=String(text||'').trim();if(!raw)return null;
+  const low=raw.toLowerCase().replace(/(\d),(\d{3})/g,'$1$2');
+  const D=new Date();if(/\byesterday\b/.test(low))D.setDate(D.getDate()-1);
+  const date=iso(D);
+  const wal=(S.wallets||[]).filter(w=>w.name&&low.includes(String(w.name).toLowerCase())).sort((a,b)=>String(b.name).length-String(a.name).length)[0]||null;
+  const parts=low.split(/\b(?:and then|and|then|also|plus)\b|[,;.]/).map(x=>x.trim()).filter(Boolean);
+  const items=[];
+  for(const c of parts){
+    const amt=vEnAmount(c);if(!amt)continue;
+    const a=Math.round(amt*100)/100,kind=vEnIntent(c);
+    if(kind==='save'){
+      const gs=S.goals||[],g=gs.find(x=>x.name&&c.includes(String(x.name).toLowerCase()))||gs[0];
+      if(!g){items.push({type:'save',cat:'',amt:a,note:'',bad:'You have no savings goal yet. Create one first.'});continue}
+      items.push({type:'save',cat:'',amt:a,note:g.name,goal:g.id});continue;
+    }
+    if(kind==='loan'||kind==='borrow'||kind==='repay'||kind==='payback'){
+      items.push({type:kind,cat:'',amt:a,note:vEnPerson(c,kind)});continue;
+    }
+    const type=kind==='income'?'income':'expense';
+    const rules=type==='income'?V_EN_INC:V_EN_CATS;
+    let cat=null;for(const [k,rx] of rules){if(rx.test(c)){cat=k;break}}
+    const wn=wal?String(wal.name).toLowerCase():'';
+    const note=c.split(wn&&wn.length?wn:'\u0000').join(' ').replace(/\d+(\.\d+)?/g,' ').replace(V_EN_FILLER,' ').replace(/\s+/g,' ').trim();
+    items.push({type,cat:cat||'أخرى',amt:a,note});
+  }
+  return{items,w:wal?wal.id:null,date,raw};
+}
 function vParse(text){
+  if(S.lang==='en')return vParseEN(text);
   const tk=vTokens(text);if(!tk.length)return null;
   const ph=vPhrases(tk).filter(p=>p.val>0),T=tk.map(t=>t.n),jn=' '+T.join(' ')+' ';
   const D=new Date(),dUsed=[];let dOff=0;
@@ -1633,7 +1700,7 @@ async function veStart(){
     try{try{const pr=await P.checkPermissions();veDiag('perm:'+(pr&&pr.speechRecognition));if(!pr||pr.speechRecognition!=='granted'){const r=await P.requestPermissions();veDiag('perm→'+(r&&r.speechRecognition))}}catch(e){veDiag('perm-err')}
       try{const a=await P.available();veDiag('avail:'+(a&&a.available))}catch(e){veDiag('avail-err')}
       // system speech dialog: most reliable inside a WebView app
-      const r=await P.start({language:'ar-EG',maxResults:3,prompt:'قول العملية، مثلاً: صرفت خمسين جنيه مواصلات',partialResults:false,popup:true});
+      const r=await P.start({language:vLang(),maxResults:3,prompt:vPrompt(),partialResults:false,popup:true});
       const m=r&&r.matches&&r.matches[0];veDiag(m?'got-text':'no-text');
       if(m){VE.text=m;const t=$('#ve-t');if(t)t.value=m}
       veDone();
@@ -1642,7 +1709,7 @@ async function veStart(){
     return}
   if(native){veFail('noplugin');return}
   const W=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(W){try{const r=new W();r.lang='ar-EG';r.interimResults=true;r.continuous=false;
+  if(W){try{const r=new W();r.lang=vLang();r.interimResults=true;r.continuous=false;
       r.onresult=e=>{let t='';for(const x of e.results)t+=x[0].transcript+' ';VE.text=t.trim();veLive()};
       r.onerror=e=>{if(e.error==='aborted')return;veFail(e.error)};r.onend=()=>veDone();VE.rec=r;r.start()}catch(e){veFail('unsupported')}return}
   veFail('unsupported')}
@@ -2014,12 +2081,12 @@ function home(){
   const p=period(0),L=inP(p),s=sums(L),n=new Date();
   const left=Math.max(Math.round((p.e-new Date(n.getFullYear(),n.getMonth(),n.getDate()))/864e5)+1,1);
   const dateStr=n.toLocaleDateString(LOCM[S.lang]||LOCM.ar,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  const tithe=Math.max(0,s.income*S.tithe/100-L.filter(t=>t.type==='expense'&&(t.cat==='عشور'||t.cat==='زكاة')).reduce((a,t)=>a+t.amt,0));const OL=openLoans(),outst=OL.reduce((a,l)=>a+l.rem,0),DB=openDebts(),debtOut=DB.reduce((a,l)=>a+l.rem,0),bd=S.bills.filter(b=>!L.some(t=>t.bill===b.id)),billsDue=bd.reduce((a,b)=>a+b.amt,0)+gamDueNow(),avail=s.bal-debtOut-billsDue,hero=avail,totBal=S.wallets.length?walTotal():s.bal,pct=s.income>0?Math.round(s.expense/s.income*100):0,pcol=pct<60?'#22c55e':pct<85?'#f59e0b':'#ef4444';
+  const tithe=Math.max(0,s.income*S.tithe/100-L.filter(t=>t.type==='expense'&&(t.cat==='عشور'||t.cat==='زكاة')).reduce((a,t)=>a+t.amt,0));const OL=openLoans(),outst=OL.reduce((a,l)=>a+l.rem,0),DB=openDebts(),debtOut=DB.reduce((a,l)=>a+l.rem,0),bd=S.bills.filter(b=>!L.some(t=>t.bill===b.id)),billsDue=bd.reduce((a,b)=>a+b.amt,0)+gamDueNow(),avail=s.bal-debtOut-billsDue,totBal=S.wallets.length?walTotal():s.bal,hero=totBal,pct=s.income>0?Math.round(s.expense/s.income*100):0,pcol=pct<60?'#22c55e':pct<85?'#f59e0b':'#ef4444';
   const _sv=PV('save'),_th=PV('tithe'),_one=_sv!==_th;
   const tip=getTip(Object.assign({},s,{bal:avail}),p,L,left,tithe);
   $('#s-home').innerHTML=`
   <div class="hdr2"><button class="av" onclick="go('set')" aria-label="الإعدادات"><svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg></button><div class="hg"><b>${n.getHours()<12?'صباح الخير':'أهلاً'}، ${S.name?U(S.name):'صديقي'} 👋</b><small>${dateStr}</small></div><button class="bell" onclick="undoLast()" aria-label="تراجع" title="تراجع" style="margin-inline-end:8px"><i class="mi" style="--m:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAYAAACOEfKtAAAACXBIWXMAAAsTAAALEwEAmpwYAAADlElEQVR4nO2cz2tTQRDHvzbtSUQSDy0UtWlNIdQ/QM2pUWoF8aDFHvxx6kWFeFCs0ouC7aEVtFCF3kSQ3gTbQwX9FwpasP4H/sBahR5a4yGyMA+WJWnee7t5b3czH1jIZWdn5u172R8zAzAMwzC20kuNicE5AP8AVAGcjSOg3XkBoEbtedrKuMii5EDxm4lIWztwH4ApAC8BHEnRgUdJhynSyRkuSMavAehIwYEdNHYg4zwc4pSkuGgTKThwQtHhJBxjVVL+B4CDCTrwAIBvUv/3cJAireECI+YSdOATqa9YSx6HozyTDPkLYDABBw4A2JX6PoXDZAH8lIxZTsCBK1K/XwAOwXFuKh/z0RY68Iwy1g14QAbAumTUZwBdIfotSH3E72Z0keygzzqN7QVlZWZUQvapUhO/m1FRxgjTxyneSMZtAciF6NNNrRk5khnIF2N5Rz+AHcnIqwZlX5Pk7tBYVtEJ4BKAkqacSTJym9aJpiiSTCH7nqasEwAumv5+Ppae8DtN44dCvpZR6SbZcSmSbYGdjwzqhtfKB1p82Odpnec6WbJF3jWJ9srkIAPKyUbQNmmt5eJyIUO6b9axa41sNoo4HrqubNJr1L7QHYYrDAP41GBC3G71hNgP4KGy36xRW2nFkzPIYXo1aw0+SVFPjLQoKPvOoO3Sv61tTO7x0IUtqTECYKOOYjr/iKYZqqPfBuluzTqxIu0Gtlu0VIlLj7RO3CJdhc7WkQNwxfAi2RRF0i3MFpJhGIZhGKZdKVNM3mLItuDYHURL7eupczYWplUt232kZh87EPr2lWnaRpniw3AH3+1jGIZhGIZJ45Z/HMAx2EfB5iP9TuVS6bdlYR/CaX9svVQaaXCtadMF+6CN15qFPS7W78M+Hthysd4stKMf9pJqaEcQXPS9QXDRKNxBHAx8TDK4KN+G4W15k4MtNZjyWfgbYClsNsaMwRDfPCUDmkbI7DMY4jtterqPGQgyvyu9+jrGqvRRWpeQfUdTVokC6jO2pzlcNih73PY0h7QSbXpD1o3xPtGmHCPVK2rdGG9TvTIxkw2j1o3xNtnwVoLprqeVsUSqLXxKuH6bQML1sk8J1/MWpPyLsgPwoejEbIJFJ+Z8KDqxmnLZk69S/w9wjJKFhXd0d1GJMmZh6SehkzNk6ABiSWPPa6L4WJ50mPZlTRiFti5/ZwJ2oCZR68YwmnVjGI26MQzDMAyS5z+S/As2OrHvqAAAAABJRU5ErkJggg==)"></i></button><button class="bell" onclick="openBell()" aria-label="إشعارات"><i class="mi" style="--m:url(data:image/png;base64,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)"></i><span class="bdg" id="bdg"></span></button></div>
-  ${driveBanner()}<div class="g bal hero2" onclick="go('wal')" style="cursor:pointer" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('wal')}"><div class="hwave" aria-hidden="true"><svg viewBox="0 0 800 140" preserveAspectRatio="none" class="w1"><path d="M0 70Q100 25 200 70T400 70T600 70T800 70V140H0Z"/></svg><svg viewBox="0 0 800 140" preserveAspectRatio="none" class="w2"><path d="M0 85Q100 120 200 85T400 85T600 85T800 85V140H0Z"/></svg></div><div class="h2top"><div class="h2t"><i class="h2ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1"/><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2H5a2 2 0 0 1-2-2"/><circle cx="16.5" cy="13.5" r="1.2" fill="currentColor"/></svg></i><span>${tr('المتاح للصرف')}</span></div><button class="eye h2eye" onclick="event.stopPropagation();toggleHide()" aria-label="إخفاء الرصيد">${S.hide?`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg>`:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>`}</button></div><div class="n h2n ${hero<0?'exp':''}"><span id="heroN" data-v="${hero}">${S.hide?'••••':f(hero)}</span> <small>${CUR()}</small></div><small class="sub2">${tr('إجمالي رصيدك')}: ${S.hide?'••••':f(totBal)} ${CUR()}</small>${S.wallets.length>1?`<div class="wbrk">${S.wallets.map(w=>{const v=wBal(w);return `<span>${w.ico} ${wn(w)} <b>${S.hide?'••':f(v)}</b></span>`}).join('')}</div>`:''}${(debtOut>0||billsDue>0)?`<small class="sub2">${debtOut>0?'ديون عليك '+f(debtOut):''}${(debtOut>0&&billsDue>0)?' • ':''}${billsDue>0?'فواتير لسه '+f(billsDue):''}</small>`:''}<div class="h2pill"><i class="h2ring" style="--p:${Math.min(100,pct)};--rc:${pct<85?'#fff':'#ffb4b4'}"></i><span>صرفت ${pct}% من دخلك</span></div><div class="h2foot"><i>‹</i><span>اضغط لعرض تفاصيل المحافظ</span></div></div>
+  ${driveBanner()}<div class="g bal hero2" onclick="go('wal')" style="cursor:pointer" role="button" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();go('wal')}"><div class="hwave" aria-hidden="true"><svg viewBox="0 0 800 140" preserveAspectRatio="none" class="w1"><path d="M0 70Q100 25 200 70T400 70T600 70T800 70V140H0Z"/></svg><svg viewBox="0 0 800 140" preserveAspectRatio="none" class="w2"><path d="M0 85Q100 120 200 85T400 85T600 85T800 85V140H0Z"/></svg></div><div class="h2top"><div class="h2t"><i class="h2ic"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ><path d="M3 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1"/><path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7a2 2 0 0 0-2-2H5a2 2 0 0 1-2-2"/><circle cx="16.5" cy="13.5" r="1.2" fill="currentColor"/></svg></i><span>${tr('إجمالي رصيدك')}</span></div><button class="eye h2eye" onclick="event.stopPropagation();toggleHide()" aria-label="إخفاء الرصيد">${S.hide?`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path d="M4 4l16 16"/></svg>`:`<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>`}</button></div><div class="n h2n ${hero<0?'exp':''}"><span id="heroN" data-v="${hero}">${S.hide?'••••':f(hero)}</span> <small>${CUR()}</small></div><small class="sub2" style="color:${avail<0?'#fecaca':'inherit'}">${tr('المتاح بعد الديون والفواتير')}: ${S.hide?'••••':f(avail)} ${CUR()}</small>${S.wallets.length>1?`<div class="wbrk">${S.wallets.map(w=>{const v=wBal(w);return `<span>${w.ico} ${wn(w)} <b>${S.hide?'••':f(v)}</b></span>`}).join('')}</div>`:''}${(debtOut>0||billsDue>0)?`<small class="sub2">${debtOut>0?'ديون عليك '+f(debtOut):''}${(debtOut>0&&billsDue>0)?' • ':''}${billsDue>0?'فواتير لسه '+f(billsDue):''}</small>`:''}<div class="h2pill"><i class="h2ring" style="--p:${Math.min(100,pct)};--rc:${pct<85?'#fff':'#ffb4b4'}"></i><span>صرفت ${pct}% من دخلك</span></div><div class="h2foot"><i>‹</i><span>اضغط لعرض تفاصيل المحافظ</span></div></div>
   ${upcomingHTML()}
   ${(()=>{const dly=f(Math.max((S.wallets.length?s.bal+S.wallets.reduce((a,w)=>a+(w.open||0),0):s.bal)-debtOut-billsDue,0)/left)+' '+CUR();
     const wc=(k,ic,lab,val,hint,click)=>`<div class="sc ${k}" ${click?`onclick="${click}"`:''}><div class="sct"><i>${sIco(ic)}</i><span>${lab}</span></div><b>${val}</b><small>${hint}</small></div>`;
@@ -2042,6 +2109,21 @@ function home(){
 }
 
 
+function tplManage(){
+  const list=(S.tpl||[]).map((t,i)=>`<div class="srow" style="gap:8px"><span class="sl">⭐ ${t.name}${t.amt?`<small style="display:block;color:var(--mut)">${f(t.amt)} ${CUR()}</small>`:''}</span><button class="chip" onclick="tplRename(${i})">✎</button><button class="chip" onclick="tplDel(${i})">🗑</button></div>`).join('')||`<div class="empty">${tr('مفيش قوالب')}</div>`;
+  openPick(tr('القوالب'),`<div class="g">${list}</div>`);
+}
+function tplRename(i){
+  const t=(S.tpl||[])[i];if(!t)return;
+  openPick(tr('تعديل القالب'),`<div class="g"><input id="tp-ren" value="${String(t.name).replace(/"/g,'&quot;')}"><button class="btn" style="width:100%;margin-top:10px" onclick="tplSaveName(${i})">${tr('حفظ')}</button></div>`);
+}
+function tplSaveName(i){
+  const n=(($('#tp-ren')||{}).value||'').trim();if(!n||!S.tpl[i])return;
+  S.tpl[i].name=n;save();tplManage();refreshAdd();
+}
+function tplDel(i){
+  if(!S.tpl[i])return;S.tpl.splice(i,1);save();tplManage();refreshAdd();
+}
 function applyTpl(i){const t=(S.tpl||[])[i];if(!t)return;add.type=t.type;add.cat=t.cat;add.w=t.w;refreshAdd();if(t.amt&&$('#a-amt'))$('#a-amt').value=t.amt;if(t.note&&$('#a-note'))$('#a-note').value=t.note}
 function openSaveTpl(){
   openPick(tr('احفظ كقالب'),`<div class="g"><input id="tp-name" placeholder="${tr('اسم القالب (مثال: كروت فك)')}"><button class="btn" style="width:100%;margin-top:10px" onclick="saveTpl()">${tr('حفظ القالب')}</button></div>`);
@@ -2103,7 +2185,7 @@ function addScr(){
     const photoRows=`<div class="sgrp"><label class="srow" style="cursor:pointer">${aic('rcpt')}<span class="sl">${tr('صورة الإيصال (اختياري)')}</span><em>${pendingPhoto?tr('اتصورت ✓'):tr('تصوير أو اختيار')}</em><input type="file" accept="image/*" capture="environment" onchange="pickPhoto(this)" style="display:none"></label>${pendingPhoto?`<button class="srow" onclick="clearPhoto()"><span class="sl" style="color:#ef4444">${tr('مسح الصورة')}</span></button>`:''}<button type="button" class="srow" onclick="voiceToggle()">${aic('mic')}<span class="sl">${tr('ملاحظة صوتية (اختياري)')}</span>${isRec()?`<em style="color:#ef4444">● ${tr('بيسجّل… اضغط للإيقاف')} <b id="rec-t">${vFmt(Date.now()-vT0)}</b></em>`:`<em>${pendingVoice?tr('اتسجلت ✓'):tr('اضغط وسجّل')}</em>`}</button>${pendingVoice&&!isRec()?`<button class="srow" onclick="clearVoice()"><span class="sl" style="color:#ef4444">${tr('مسح التسجيل')}</span></button>`:''}</div>${pendingPhoto?`<img src="${pendingPhoto}" style="width:100%;border-radius:16px;margin:-6px 0 14px;max-height:200px;object-fit:cover">`:''}${pendingVoice&&!isRec()?`<audio id="a-aud" controls style="width:100%;margin:-6px 0 14px"></audio>`:''}`;
     body=grpA+`<div class="sgrp">${catRow}${splRow}${walRow}${dateRow}${noteRow}${dueRow}${repRow}</div>`+splitRows+photoRows+`<button class="btn savebtn" onclick="saveTx()">حفظ</button>`;setTimeout(voiceBind,0);
   }
-  const tplRow=(S.tpl&&S.tpl.length&&!isR&&!isT)?`<div class="tabs wide" style="margin:0 0 10px">${S.tpl.map((t,i)=>`<button class="chip" onclick="applyTpl(${i})">⭐ ${U(t.name)}</button>`).join('')}</div>`:'';
+  const tplRow=(S.tpl&&S.tpl.length&&!isR&&!isT)?`<div class="tabs wide" style="margin:0 0 10px">${S.tpl.map((t,i)=>`<button class="chip" onclick="applyTpl(${i})">⭐ ${U(t.name)}</button>`).join('')}<button class="chip" onclick="tplManage()" aria-label="تعديل القوالب">⚙️</button></div>`:'';
   const tplBtn=(!isR&&!isT)?`<button class="btn s" style="margin:8px 0 0;width:100%" onclick="openSaveTpl()">⭐ ${tr('احفظ كقالب')}</button>`:'';
   $('#s-add').innerHTML=head+seg+tplRow+body+tplBtn+quick;
 }
@@ -2253,7 +2335,7 @@ function dayStrip(){
   return `<div class="dstrip" ontouchstart="dsT=event.touches[0].clientX" ontouchend="dsEnd(event)"><div class="dhead"><button class="dnav" onclick="wkMove(-1)" aria-label="prev">›</button><span>${lab}</span><button class="dnav" onclick="wkMove(1)" aria-label="next">‹</button></div><div class="dcells">${cells}</div>${sum}</div>`}
 function log(){
   const fl=[['all','الكل'],['expense','مصروف'],['income','دخل'],['loan','سلفة'],['repay','استرداد'],['borrow','استلفت'],['payback','سدّدت دين']];
-  $('#s-log').innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between"><h2 style="margin:0">سجل العمليات</h2><button class="btn s" style="width:auto;padding:8px 12px" onclick="openReceipts()">🧾 ${tr('الإيصالات')}</button></div>${dayStrip()}<input id="q" placeholder="🔍 ابحث عن عملية..." value="${q}">
+  $('#s-log').innerHTML=`<div style="display:flex;align-items:center;justify-content:space-between"><h2 style="margin:0">سجل العمليات</h2><button class="btn s" style="width:auto;padding:8px 12px" onclick="openBillsGams()">🧾 ${tr('الفواتير والجمعيات')}</button></div>${dayStrip()}<input id="q" placeholder="🔍 ابحث عن عملية..." value="${q}">
   <div class="tabs wide" style="margin-top:10px">${fl.map(x=>`<button class="chip ${flt===x[0]?'on':''}" onclick="flt='${x[0]}';log()">${x[1]}</button>`).join('')}</div>
   <button class="btn s" id="xfBtn" style="margin:8px 0 0;width:100%" onclick="xfOpen=!xfOpen;log()">${xfLabel()}</button>
   ${xfOpen?xfPanel():''}
@@ -2325,7 +2407,7 @@ function rep(){
 
 
 /* ===== Developer info: fill these in. Empty fields are hidden automatically. ===== */
-const DEV={appName:'My Cash: Tracker',version:'1.0',name:'Mina Maximos',role:'شركة MaxRoid',about:'',email:'mena.yoosef2025@gmail.com',whatsapp:'201558688687',telegram:'Mina_Maximos',youtube:'https://m.youtube.com/@MinaMaximos/videos',website:''};
+const DEV={appName:'My Cash: Tracker',version:'1.0',name:'Mina Maximos',role:'شركة MaxRoid',about:'',email:'',whatsapp:'',telegram:'',youtube:'',website:''};
 function openLink(k){
   const v=(DEV[k]||'').trim();if(!v)return;
   const C=window.Capacitor;
@@ -2485,6 +2567,21 @@ async function exportReceiptsPDF(){const items=S.tx.filter(t=>t.photo).sort((a,b
   const html=`<!doctype html><html dir="rtl" lang="ar"><head><meta charset="utf-8"><title>${APP_NAME} - ${tr('الإيصالات')}</title><style>body{font-family:sans-serif;margin:24px;color:#111}h1{font-size:20px}.r{display:flex;gap:12px;align-items:center;border:1px solid #ddd;border-radius:12px;padding:10px;margin:10px 0;break-inside:avoid}img{width:140px;height:140px;object-fit:cover;border-radius:10px}@media print{body{margin:10mm}}</style></head><body><h1>${APP_NAME} · ${tr('الإيصالات')}</h1>${body}</body></html>`;
   const C=window.Capacitor;if(C&&C.isNativePlatform&&C.isNativePlatform()){saveFile('my-cash-receipts.html','text/html',html);return}
   const w=window.open('','_blank');if(w){w.document.write(html);w.document.close();setTimeout(()=>{try{w.print()}catch(e){}},400)}else saveFile('my-cash-receipts.html','text/html',html);}
+function openBillsGams(){
+  const now=new Date(),tday=now.getDate(),dim=new Date(now.getFullYear(),now.getMonth()+1,0).getDate();
+  const unpaid=new Set(billsLeft().map(b=>b.id));
+  const bills=(S.bills||[]).slice().sort((a,b)=>(a.day-b.day));
+  const billRows=bills.length?bills.map(b=>{
+    const due=unpaid.has(b.id),left=b.day>=tday?b.day-tday:dim-tday+b.day;
+    const when=!due?tr('اتدفعت'):(left===0?tr('النهارده'):`${tr('بعد')} ${left} ${tr('يوم')}`);
+    return `<div class="row"><div class="ic" style="background:rgba(245,158,11,.22)">🧾</div><div class="m"><b>${U(b.name)}</b><small>${f(b.amt)} ${CUR()} • ${tr('يوم')} ${b.day} ${tr('كل شهر')}</small></div><small style="color:${due?(left<=3?'#f43f5e':'#f59e0b'):'#10b981'};font-weight:600">${when}</small></div>`;
+  }).join(''):`<div class="empty">${tr('مفيش فواتير متسجلة')}</div>`;
+  const gams=(S.gams||[]).length?(S.gams||[]).map(g=>gamCard(g)).join(''):`<div class="empty">${tr('مفيش جمعيات')}</div>`;
+  sheet(`<div class="avatar">🧾</div><h3>${tr('الفواتير والجمعيات')}</h3>
+    <div class="g"><div class="sec" style="margin-top:0">${tr('الفواتير')}</div>${billRows}</div>
+    <div class="g"><div class="sec" style="margin-top:0">${tr('الجمعيات')}</div>${gams}</div>
+    <button class="btn s" onclick="openReceipts()">🧾 ${tr('الإيصالات')}</button>`);
+}
 function openReceipts(){
   const items=S.tx.filter(t=>t.photo).sort((a,b)=>b.date.localeCompare(a.date)||b.t-a.t);
   let h='',last='';
@@ -2642,6 +2739,201 @@ function go(n){const prev=cur;cur=n;if(n==='plan'&&prev!=='plan')planSub='';docu
 const LANGS={ar:['العربية','🇪🇬'],en:['English','🇬🇧'],fr:['Français','🇫🇷'],de:['Deutsch','🇩🇪'],it:['Italiano','🇮🇹'],zh:['中文','🇨🇳'],ja:['日本語','🇯🇵']};
 Object.assign(EN,{'اختر لغتك':'Choose your language','المرتب نزل؟':'Has your salary arrived?','✅ أيوه، نزل':'✅ Yes, it arrived','⏳ لسه':'⏳ Not yet','تخطي الشهر ده':'Skip this month','تمام، هسألك تاني بكرة':"OK, I'll ask again tomorrow",'المرتب ماشي معاك ازاي؟':'How is your salary split?','وزّع المرتب على كاش وفيزا ومحافظك':'Split it across cash, card and wallets','المبلغ اللي نزل':'Amount received','الموزّع':'Split','باقي':'Left','فوق المتوقع':'Above expected','سجّل المرتب':'Record salary','تم تسجيل المرتب ✅':'Salary recorded ✅','المرتب':'Salary','يوم نزول المرتب (1-31)':'Salary day (1-31)','مبلغ المرتب':'Salary amount','تذكير المرتب شغّال ✓':'Salary reminder on ✓','تفعيل تذكير المرتب':'Enable salary reminder','تم حفظ إعدادات المرتب':'Salary settings saved','اكتب يوم ومبلغ صح':'Enter a valid day and amount','فيزا':'Visa','محفظة':'Wallet','انستاباي':'InstaPay','فودافون كاش':'Vodafone Cash','فواتير الشهر دي':'Bills for this month','اضغط "دفعت" لما تسدّد الفاتورة':'Tap "Paid" once you pay a bill','دفعت ✓':'Paid ✓','لاحقًا':'Later','كل فواتير الشهر اتدفعت ✅':'All bills are paid ✅','اضغط على اقتراح عشان تضيفه':'Tap a suggestion to add it','رصيد الخط':'Phone credit','باك أب النت':'Backup internet','المياه':'Water','الغاز':'Gas','الكهرباء':'Electricity','افتح التطبيق وسجّله':'Open the app and record it','التطبيق مقفول':'App is locked','افتح':'Unlock','تأكيد هويتك':'Confirm your identity','إلغاء':'Cancel','التأكيد فشل، حاول تاني':'Verification failed, try again','القفل مش مدعوم على الجهاز ده':'Lock is not supported on this device','تفعيل القفل (بصمة / وجه / قفل الشاشة)':'Enable lock (fingerprint / face / screen lock)','تم إلغاء الرقم السري القديم، فعّل القفل الجديد':'Old PIN removed. Now enable the new lock','تم تفعيل القفل':'Lock enabled','تم إيقاف القفل':'Lock disabled','تحب تفعّل قفل التطبيق بالبصمة أو الوجه أو قفل شاشة الجهاز؟ تقدر تغيّر الاختيار من الإعدادات في أي وقت.':'Would you like to lock the app with fingerprint, face unlock, or your device screen lock? You can change this in Settings anytime.'});
 Object.assign(EN,{'المتاح يوميًا':'Daily budget','العشور':'Tithe','حتى نهاية الشهر':'Until month end','تقريبًا كل يوم':'About per day'});
+Object.assign(EN,{
+ "أو اكتب هنا / استخدم ميكروفون الكيبورد": "Or type here / use the keyboard microphone",
+ "أول شهر في الجمعية": "First month of the association",
+ "اتدفعت": "Paid",
+ "اتضافت الجمعية ✅": "Association added ✅",
+ "اختر التصنيف": "Choose category",
+ "اسم الجمعية (مثال: جمعية الشغل)": "Association name (e.g. work association)",
+ "اكتب اسم الشخص": "Enter the person's name",
+ "اكتب الاسم والقسط وعدد الشهور، ورقم دورك لازم يكون من 1 لـ عدد الشهور": "Enter the name, installment and number of months. Your turn number must be between 1 and the number of months",
+ "اكتب التفاصيل بنفسك": "Type the details yourself",
+ "الجاي قريب": "Coming up",
+ "الفواتير والجمعيات": "Bills & associations",
+ "القوالب": "Templates",
+ "المتاح بعد الديون والفواتير": "Available after debts & bills",
+ "بالصوت": "By voice",
+ "بتدفع منين؟": "Paying from where?",
+ "تحب تسمح لـ My Cash: Tracker بإرسال إشعارات وتذكيرات بالمصروفات والفواتير؟ تقدر تغيّر ده من الإعدادات في أي وقت.": "Allow My Cash: Tracker to send notifications and reminders about expenses and bills? You can change this in Settings anytime.",
+ "تعديل القالب": "Edit template",
+ "تمسح الجمعية دي؟ العمليات اللي اتسجلت بتفضل زي ما هي.": "Delete this association? Recorded transactions stay as they are.",
+ "رقم دورك": "Your turn number",
+ "عدد الأيدي (اختياري)": "Number of hands (optional)",
+ "عدد الشهور / الأعضاء": "Months / members",
+ "عدّل المبلغ لو كان فيه خصم أو عمولة": "Adjust the amount if there is a deduction or fee",
+ "قول الجملة وهنسجّلها": "Say the sentence and we'll record it",
+ "قول مثلاً: صرفت خمسين جنيه مواصلات الشغل": "For example, say: spent fifty pounds on work transport",
+ "كل شهر": "Every month",
+ "لون المخصص": "Custom color",
+ "مفهمتش مبلغ في الكلام ده. قول المبلغ والبند، مثلاً: صرفت خمسين جنيه مواصلات": "I didn't catch an amount in that. Say the amount and category, e.g. spent fifty pounds on transport",
+ "مفيش جمعيات": "No associations",
+ "مفيش فواتير متسجلة": "No bills recorded",
+ "مفيش قوالب": "No templates",
+ "يدوي": "Manual"
+});
+Object.assign(EN,{
+  "الـ APK ده مفيهوش مكتبة التعرف على الصوت. ارفع build-apk.yml الجديد وابنِ تاني. وفي الوقت ده اكتب العملية أو استخدم ميكروفون الكيبورد.": "This APK doesn't include the speech recognition library. Upload the new build-apk.yml and rebuild. Meanwhile, type the transaction or use the keyboard microphone.",
+  "الميكروفون مقفول للتطبيق. افتح إعدادات الموبايل ← التطبيقات ← My Cash ← الأذونات ← الميكروفون وفعّله.": "The microphone is blocked for the app. Open phone Settings → Apps → My Cash → Permissions → Microphone and turn it on.",
+  "التعرف على الصوت مش مدعوم هنا. اكتب العملية، أو استخدم ميكروفون الكيبورد، وهفهمها برضه.": "Speech recognition isn't supported here. Type the transaction or use the keyboard microphone, and I'll still understand it.",
+  "الميكروفون مقفول للتطبيق. فعّله من إعدادات الموبايل ← التطبيقات ← My Cash ← الأذونات.": "The microphone is blocked for the app. Turn it on from phone Settings → Apps → My Cash → Permissions.",
+  "التسجيل المباشر مش مدعوم في النسخة دي من التطبيق.": "Live recording isn't supported in this version of the app.",
+  "الميكروفون مشغول بتطبيق تاني، اقفله وجرّب تاني.": "The microphone is busy with another app. Close it and try again.",
+  "خدمة التعرف على الصوت مش متاحة على الموبايل ده.": "Speech recognition isn't available on this phone.",
+  "حصلت مشكلة في الصوت، اكتب العملية بدل كده.": "There was a voice problem. Type the transaction instead.",
+  "أو اكتب هنا / استخدم ميكروفون الكيبورد": "Or type here / use the keyboard microphone",
+  "لازم تكون عندك محفظتين على الأقل": "You need at least two wallets",
+  "التطبيق مش قادر يوصل للميكروفون.": "The app can't access the microphone.",
+  "مفيش ميكروفون متاح على الجهاز.": "No microphone is available on this device.",
+  "محتاج إنترنت علشان يفهم الصوت.": "Internet is needed for voice recognition.",
+  "تعذّر تسجيل الدخول. جرّب تاني": "Couldn't sign in. Try again",
+  "تمام، هفكرك بيها الشهر الجاي": "OK, I'll remind you next month",
+  "اختار بلدك عشان نظبط العملة": "Choose your country to set the currency",
+  "البنك التجاري الدولي CIB": "Commercial International Bank CIB",
+  "سجّلت مصروفات النهارده؟": "Did you log today's expenses?",
+  "مسمعتش حاجة، جرّب تاني.": "I didn't hear anything. Try again.",
+  "اكتب اسم الهدف والمبلغ": "Enter goal name and amount",
+  "📊 ملخص الشهر اللي فات": "📊 Last month's summary",
+  "اكتب الاسم والمبلغ صح": "Enter the name and amount correctly",
+  "تمام، هسألك تاني بكرة": "OK, I'll ask again tomorrow",
+  "البنك العربي الأفريقي": "Arab African International Bank",
+  "بنك أبوظبي الأول FAB": "First Abu Dhabi Bank FAB",
+  "بنك التعمير والإسكان": "Al Ta'mir & Housing Bank",
+  "مصرف أبوظبي الإسلامي": "Abu Dhabi Islamic Bank",
+  "الرقمين مش متطابقين": "The two numbers don't match",
+  "البنك الأهلي المصري": "National Bank of Egypt",
+  "الإمارات دبي الوطني": "Emirates NBD",
+  "الفاتورة دي اتمسحت": "This bill was deleted",
+  "المحفظة دي موجودة": "This wallet already exists",
+  "الدين ده اتسدّد ✅": "This debt is settled ✅",
+  "بنك الكويت الوطني": "National Bank of Kuwait",
+  "بنك فيصل الإسلامي": "Faisal Islamic Bank",
+  "اكتب اسم المحفظة": "Enter wallet name",
+  "تم تعديل الهدف ✅": "Goal updated ✅",
+  "تعذّر حفظ الصورة": "Couldn't save the image",
+  "دينار بحريني د.ب": "Bahraini dinar BHD",
+  "درهم إماراتي د.إ": "UAE dirham AED",
+  "تعذّر حفظ الملف": "Couldn't save the file",
+  "جنيه إسترليني £": "Pound sterling £",
+  "دينار أردني د.أ": "Jordanian dinar JOD",
+  "دينار كويتي د.ك": "Kuwaiti dinar KWD",
+  "🧾 فواتير الشهر": "🧾 Bills this month",
+  "الإشعار ده خلص": "This notification is no longer available",
+  "بنك الإسكندرية": "Alexandria Bank",
+  "ريال سعودي ر.س": "Saudi riyal SAR",
+  "ريال عماني ر.ع": "Omani rial OMR",
+  "💰 المرتب نزل؟": "💰 Has your salary arrived?",
+  "جنيه مصري ج.م": "Egyptian pound EGP",
+  "ريال قطري ر.ق": "Qatari riyal QAR",
+  "شركة MaxRoid": "MaxRoid company",
+  "فواتير الشهر": "Bills this month",
+  "اتصالات كاش": "Etisalat Cash",
+  "اكتب الرصيد": "Enter the balance",
+  "بنك القاهرة": "Cairo Bank",
+  "فودافون كاش": "Vodafone Cash",
+  "زجاجي داكن": "Dark glass",
+  "زجاجي فاتح": "Light glass",
+  "المبلغ صفر": "Amount is zero",
+  "تم التحويل": "Transfer done",
+  "QNB الأهلي": "QNB Al Ahli",
+  "أورنج كاش": "Orange Cash",
+  "اورنج كاش": "Orange Cash",
+  "انستا باي": "InstaPay",
+  "الإيرادات": "Income",
+  "المصروفات": "Expenses",
+  "الملاحظات": "Notes",
+  "التذكيرات": "Reminders",
+  "هدف ادخار": "Savings goal",
+  "الملاحظة": "Note",
+  "الحسابات": "Accounts",
+  "الإمارات": "UAE",
+  "السعودية": "Saudi Arabia",
+  "بريطانيا": "United Kingdom",
+  "بلد تاني": "Another country",
+  "HSBC مصر": "HSBC Egypt",
+  "اتصالات": "Etisalat",
+  "فودافون": "Vodafone",
+  "ملاحظات": "Notes",
+  "البحرين": "Bahrain",
+  "الجزائر": "Algeria",
+  "السودان": "Sudan",
+  "بنك مصر": "Banque Misr",
+  "بنك آخر": "Other bank",
+  "دولار $": "US dollar $",
+  "من أصل": "out of",
+  "وي كاش": "WE Cash",
+  "الموقع": "Location",
+  "حسابات": "Accounts",
+  "بطاقات": "Cards",
+  "ملايين": "millions",
+  "كرتونه": "carton",
+  "المبلغ": "Amount",
+  "الأردن": "Jordan",
+  "العراق": "Iraq",
+  "الكويت": "Kuwait",
+  "المغرب": "Morocco",
+  "فلسطين": "Palestine",
+  "أمريكا": "USA",
+  "يورو €": "Euro €",
+  "مفتوح": "Open",
+  "أهلاً": "Hi",
+  "اورنج": "Orange",
+  "أورنج": "Orange",
+  "انستا": "InstaPay",
+  "الوصف": "Description",
+  "بطاقه": "Card",
+  "تذاكر": "Tickets",
+  "تذكره": "Ticket",
+  "السنة": "Year",
+  "دقيقه": "minute",
+  "دقايق": "minutes",
+  "ساعات": "hours",
+  "مليون": "million",
+  "الفين": "2,000",
+  "وجبات": "meals",
+  "كيلوا": "kg",
+  "لترات": "liters",
+  "زجاجه": "bottle",
+  "تعديل": "Edit",
+  "اليمن": "Yemen",
+  "تركيا": "Turkey",
+  "سوريا": "Syria",
+  "عُمان": "Oman",
+  "ليبيا": "Libya",
+  "لبنان": "Lebanon",
+  "ماستر": "Mastercard",
+  "ابدأ": "Start",
+  "نقدي": "Cash",
+  "داكن": "Dark",
+  "ايام": "days",
+  "ساعه": "hour",
+  "وجبه": "meal",
+  "حبات": "pieces",
+  "كيلو": "kg",
+  "علبه": "can",
+  "قطعه": "piece",
+  "جرام": "gram",
+  "فلوس": "Money",
+  "تونس": "Tunisia",
+  "عمان": "Oman",
+  "كندا": "Canada",
+  "د.أ": "JOD",
+  "د.إ": "AED",
+  "د.ب": "BHD",
+  "د.ت": "TND",
+  "د.ج": "DZD",
+  "د.ع": "IQD",
+  "د.ك": "KWD",
+  "د.ل": "LYD",
+  "د.م": "MAD",
+  "ر.س": "SAR",
+  "ر.ع": "OMR",
+  "ر.ق": "QAR",
+  "ر.ي": "YER",
+  "ج.س": "SDG",
+  "ل.س": "SYP",
+  "ل.ل": "LBP"
+});
 const DICT={en:EN,fr:{'اختر لغتك':'Choisissez votre langue','المرتب نزل؟':'Votre salaire est-il arrivé ?','✅ أيوه، نزل':'✅ Oui, il est arrivé','⏳ لسه':'⏳ Pas encore','تخطي الشهر ده':'Ignorer ce mois','تمام، هسألك تاني بكرة':'OK, je redemande demain','المرتب ماشي معاك ازاي؟':'Comment est réparti votre salaire ?','وزّع المرتب على كاش وفيزا ومحافظك':'Répartissez entre espèces, carte et portefeuilles','المبلغ اللي نزل':'Montant reçu','الموزّع':'Réparti','باقي':'Reste','فوق المتوقع':'Au-dessus du prévu','سجّل المرتب':'Enregistrer le salaire','تم تسجيل المرتب ✅':'Salaire enregistré ✅','المرتب':'Salaire','يوم نزول المرتب (1-31)':'Jour du salaire (1-31)','مبلغ المرتب':'Montant du salaire','تذكير المرتب شغّال ✓':'Rappel du salaire activé ✓','تفعيل تذكير المرتب':'Activer le rappel du salaire','تم حفظ إعدادات المرتب':'Paramètres enregistrés','اكتب يوم ومبلغ صح':'Entrez un jour et un montant valides','فيزا':'Visa','محفظة':'Portefeuille','كاش':'Espèces','كارت':'Carte','بنك':'Banque','فواتير الشهر دي':'Factures de ce mois','اضغط "دفعت" لما تسدّد الفاتورة':'Appuyez sur « Payée » après paiement','دفعت ✓':'Payée ✓','لاحقًا':'Plus tard','كل فواتير الشهر اتدفعت ✅':'Toutes les factures sont payées ✅','اضغط على اقتراح عشان تضيفه':'Touchez une suggestion pour l’ajouter','رصيد الخط':'Crédit téléphone','باك أب النت':'Internet de secours','المياه':'Eau','الغاز':'Gaz','الكهرباء':'Électricité','افتح التطبيق وسجّله':'Ouvrez l’app et enregistrez-le','التطبيق مقفول':'Application verrouillée','افتح':'Déverrouiller','تأكيد هويتك':'Confirmez votre identité','إلغاء':'Annuler','التأكيد فشل، حاول تاني':'Échec, réessayez','القفل مش مدعوم على الجهاز ده':'Verrouillage non pris en charge','تفعيل القفل (بصمة / وجه / قفل الشاشة)':'Activer le verrouillage (empreinte / visage / code)','تم تفعيل القفل':'Verrouillage activé','تم إيقاف القفل':'Verrouillage désactivé','إيقاف القفل':'Désactiver le verrouillage','الرئيسية':'Accueil','التقارير':'Rapports','العمليات':'Opérations','الإعدادات':'Paramètres','صباح الخير':'Bonjour','أهلاً':'Bonjour','صديقي':'ami','إجمالي رصيدك':'Votre solde total','إجمالي الدخل':'Revenus','إجمالي المصروف':'Dépenses','الأيام المتبقية':'Jours restants','يوم':'jours','مصروف':'Dépense','دخل':'Revenu','سلفة':'Prêt','أكل':'Repas','مواصلات':'Transport','فواتير':'Factures','تسوق':'Courses','صحة':'Santé','ترفيه':'Loisirs','تعليم':'Éducation','أخرى':'Autre','مرتب':'Salaire','إضافة عملية':'Ajouter','المبلغ':'Montant','التاريخ':'Date','حفظ العملية':'Enregistrer','حفظ':'Enregistrer','سجل العمليات':'Historique','الكل':'Tout','الميزانيات':'Budgets','الفواتير':'Factures','المحافظ':'Portefeuilles','محافظي':'Mes portefeuilles','الإجمالي':'Total','اللغة':'Langue','العملة':'Devise','اسمك':'Votre nom','المظهر':'Apparence','الإشعارات':'Notifications','الخصوصية':'Confidentialité','النسخ الاحتياطي':'Sauvegarde','البيانات الشخصية':'Données personnelles','فاتح':'Clair','داكن':'Sombre','يناير':'janvier','فبراير':'février','مارس':'mars','أبريل':'avril','مايو':'mai','يونيو':'juin','يوليو':'juillet','أغسطس':'août','سبتمبر':'septembre','أكتوبر':'octobre','نوفمبر':'novembre','ديسمبر':'décembre','آخر العمليات':'Dernières opérations','تحويل بين المحافظ':'Transfert entre portefeuilles','محفظة جديدة':'Nouveau portefeuille','الرصيد المتاح':'Solde disponible'}};
 const EXTRA_DICT={
 de:{'الرئيسية':'Startseite','التقارير':'Berichte','العمليات':'Transaktionen','الإعدادات':'Einstellungen','الرصيد المتاح':'Verfügbares Guthaben','إجمالي رصيدك':'Gesamtguthaben','إجمالي الدخل':'Gesamteinnahmen','إجمالي المصروف':'Gesamtausgaben','الأيام المتبقية':'Verbleibende Tage','آخر العمليات':'Letzte Transaktionen','مصروف':'Ausgabe','دخل':'Einnahme','سلفة':'Darlehen','أكل':'Essen','مواصلات':'Transport','فواتير':'Rechnungen','تسوق':'Einkaufen','صحة':'Gesundheit','ترفيه':'Freizeit','تعليم':'Bildung','أخرى':'Sonstiges','مرتب':'Gehalt','شغل إضافي':'Zusätzliches Einkommen','هدية':'Geschenk','إضافة عملية':'Transaktion hinzufügen','المبلغ':'Betrag','التاريخ':'Datum','حفظ العملية':'Transaktion speichern','سجل العمليات':'Transaktionsverlauf','الكل':'Alle','المظهر':'Darstellung','اللغة':'Sprache','العملة':'Währung','اسمك':'Dein Name','حفظ الإعدادات':'Einstellungen speichern','محافظي':'Meine Geldbörsen','محفظة جديدة':'Neue Geldbörse','تحويل بين المحافظ':'Zwischen Geldbörsen überweisen','اختر لغتك':'Sprache auswählen','كاش':'Bargeld','محفظة':'Geldbörse','بنك':'Bank'},
