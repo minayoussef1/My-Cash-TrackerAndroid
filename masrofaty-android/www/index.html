@@ -1079,12 +1079,12 @@ html[data-theme="glasslight"] .srow .sl,html[data-theme="glasslight"] #sheet .pa
 /* darker, clearly visible separators between list rows */
 html[data-theme="glass"] .srow{border-bottom:1px solid rgba(0,0,0,.45)!important}
 html[data-theme="glasslight"] .srow{border-bottom:1px solid rgba(30,40,70,.38)!important}
-/* lighter glass for speed on phones: smaller blur, no infinite background motion, lighter dock */
-html[data-theme^="glass"] .sgrp,html[data-theme^="glass"] #sheet .panel{backdrop-filter:blur(12px) saturate(150%)!important;-webkit-backdrop-filter:blur(12px) saturate(150%)!important}
-html[data-theme^="glass"] .q2>.q2b::before,html[data-theme^="glass"] .q2>.q2b::after{animation:none!important;transition:none!important}
-html[data-theme^="glass"] .nav>div{backdrop-filter:blur(10px) saturate(170%)!important;-webkit-backdrop-filter:blur(10px) saturate(170%)!important}
-html[data-theme^="glass"] .nav>div::before{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
-html[data-theme^="glass"] .drop{backdrop-filter:blur(6px) saturate(160%)!important;-webkit-backdrop-filter:blur(6px) saturate(160%)!important}
+/* medium performance: smaller blur, no background motion */
+html.perf-mid[data-theme^="glass"] .sgrp,html.perf-mid[data-theme^="glass"] #sheet .panel{backdrop-filter:blur(12px) saturate(150%)!important;-webkit-backdrop-filter:blur(12px) saturate(150%)!important}
+html.perf-mid[data-theme^="glass"] .q2>.q2b::before,html.perf-mid[data-theme^="glass"] .q2>.q2b::after{animation:none!important;transition:none!important}
+html.perf-mid[data-theme^="glass"] .nav>div{backdrop-filter:blur(10px) saturate(170%)!important;-webkit-backdrop-filter:blur(10px) saturate(170%)!important}
+html.perf-mid[data-theme^="glass"] .nav>div::before{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.perf-mid[data-theme^="glass"] .drop{backdrop-filter:blur(6px) saturate(160%)!important;-webkit-backdrop-filter:blur(6px) saturate(160%)!important}
 </style>
 </head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="dockLens" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.01 0.03" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="44" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
@@ -2138,7 +2138,7 @@ function applyTheme(){document.documentElement.classList.toggle('lite',!!S.lite)
   if(t==='auto')t=S.glassAuto&&!S.ramLow?(dm.matches?'glass':'glasslight'):(dm.matches?'dark':'light');
   const _blk=S.theme==='black';if(_blk)t='dark';
   const h=document.documentElement,st=h.style,[a,b]=accPair();
-  S.lite=false;h.dataset.theme=t;h.classList.remove('lite');if(S.ramLow)h.classList.add('lite');h.classList.toggle('black',_blk);h.classList.toggle('lg-tint',S.lg==='tinted');h.classList.toggle('bold',S.bold!==false);applyFont();
+  S.lite=(S.perf==='low'||!!S.ramLow);h.dataset.theme=t;h.classList.toggle('lite',S.lite);h.classList.toggle('perf-mid',S.perf==='mid');h.classList.toggle('black',_blk);h.classList.toggle('lg-tint',S.lg==='tinted');h.classList.toggle('bold',S.bold!==false);applyFont();
   st.setProperty('--acc',a);st.setProperty('--acc2',b);st.setProperty('--accrgb',hx(a).join(','));st.setProperty('--acc2rgb',hx(b).join(','));
   if(t==='glass'){const B='#0b1226';st.setProperty('--page',`radial-gradient(120% 70% at 80% 0%,${mixc(a,B,.4)} 0%,transparent 60%),radial-gradient(90% 60% at 0% 100%,${mixc(b,B,.4)} 0%,transparent 55%),linear-gradient(180deg,${mixc(a,B,.15)},${B})`)}
   else if(t==='glasslight'){const W='#ffffff';st.setProperty('--page',`radial-gradient(120% 70% at 80% 0%,${mixc(a,W,.45)} 0%,transparent 62%),radial-gradient(90% 60% at 0% 100%,${mixc(b,W,.4)} 0%,transparent 58%),linear-gradient(180deg,${mixc(a,W,.1)},${mixc(b,W,.16)})`)}
@@ -2160,6 +2160,7 @@ function themeColorsScr(){
   <div class="g themeCard"><div class="thTitle">${tr('الألوان')}</div><div class="swgrid6">${ACC_SOLID.map(k=>`<button class="sw6 ${swOn(k)}" style="background:linear-gradient(135deg,${ACC[k][0]},${ACC[k][1]})" onclick="mixPick('${k}')" aria-label="${k}"></button>`).join('')}</div></div>`;
   setTimeout(mixUI,0);
 }
+function setPerf(k){S.perf=k;if(k==='low'&&(S.theme==='glass'||S.theme==='glasslight'))S.theme=S.theme==='glass'?'dark':'light';save();applyTheme();themeScr()}
 function themeScr(){
   const TL={light:'فاتح',dark:'غامق',auto:'تلقائي',glass:'غامق زجاجي',glasslight:'فاتح زجاجي',black:'غامق'};
   const isGl=S.theme==='glass'||S.theme==='glasslight';
@@ -2178,7 +2179,8 @@ function themeScr(){
     <button class="thRow" onclick="toggleBold()"><span>${tr('خط عريض')}</span><span class="sw2 ${S.bold!==false?'on':''}"><i></i></span></button>
     <button class="thRow" onclick="go('thc')"><span>${tr('تخصيص الألوان')}</span><span class="thDots"><i style="background:${accPair()[0]}"></i><i style="background:${accPair()[1]}"></i><b>›</b></span></button></div>
   <div class="g themeCard"><div class="thTitle">${tr('الألوان')}</div><div class="swgrid6">${sw}</div></div>
-`;
+<div class="g themeCard"><div class="thTitle">${tr('الأداء')}</div><div class="tabs" style="margin-top:6px">${[['low',tr('منخفض')],['mid',tr('متوسط')],['high',tr('عالي')]].map(([v,l])=>`<button class="chip ${(S.perf||'high')===v?'on':''}" onclick="setPerf('${v}')">${l}</button>`).join('')}</div><small style="color:var(--mut)">${tr('منخفض: من غير زجاج ولا حركات. متوسط: زجاج أخف وحركات أقل. عالي: كل الزجاج والحركات')}</small></div>
+  `;
   setTimeout(mixUI,0);
 }
 
