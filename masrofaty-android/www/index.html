@@ -1034,8 +1034,60 @@ html[data-theme^="glass"] .nav>div.dg .drop .lensc,html[data-theme^="glass"] .na
 html.lite .q2>.q2b::before,html.lite .q2>.q2b::after{animation:none}
 @media (prefers-reduced-motion:reduce){.q2>.q2b::before,.q2>.q2b::after{animation:none}}
 </style>
+<style>
+@keyframes stkIn{from{opacity:0;transform:translateY(26px) scale(.94)}to{opacity:1;transform:none}}
+.q2.stk-in>.q2b{animation:stkIn .6s cubic-bezier(.2,.8,.2,1) both}
+.q2.stk-in>.q2b+.q2b{animation-delay:.12s}
+/* back cards: float slowly on their own rotate property, and lift toward the front as the swipe moves */
+@keyframes deckA2{0%,100%{rotate:-2.2deg}50%{rotate:-1deg}}
+@keyframes deckB2{0%,100%{rotate:2.4deg}50%{rotate:1.2deg}}
+.q2>.q2b::before{transform:translateY(calc(var(--dk,0) * -7px)) scale(calc(1 + var(--dk,0) * .03))!important;transition:transform .4s cubic-bezier(.2,.8,.2,1),background .35s ease!important;animation:deckA2 4.6s ease-in-out infinite!important}
+.q2>.q2b::after{transform:translateY(calc(var(--dk,0) * -9px)) scale(calc(1 + var(--dk,0) * .04))!important;transition:transform .4s cubic-bezier(.2,.8,.2,1),background .35s ease!important;animation:deckB2 5.2s ease-in-out infinite!important}
+html.lite .q2>.q2b::before,html.lite .q2>.q2b::after{animation:none!important}
+@media (prefers-reduced-motion:reduce){.q2.stk-in>.q2b{animation:none}.q2>.q2b::before,.q2>.q2b::after{animation:none!important}}
+</style>
+<style>
+/* while the finger moves in glass themes: icons keep their size (no proximity zoom) and the bubble bends what is under it, like the reference */
+html[data-theme^="glass"] .nav>div.dg button:not(.fab),html[data-theme^="glass"] .nav>div.dg button:not(.fab) span{transform:none!important}
+</style>
+<style>
+html[data-theme^="glass"] .nav>div.dg .drop,html[data-theme^="glass"] .nav>div .drop.drag{z-index:2!important;backdrop-filter:url(#dockLens) blur(1px) saturate(180%)!important;-webkit-backdrop-filter:url(#dockLens) blur(1px) saturate(180%)!important}
+</style>
+<style>
+/* the + button sits under the glass bubble while it passes over it, like the other items */
+html[data-theme^="glass"] .nav button.fab{position:relative;z-index:1}
+</style>
+<style>
+/* trial: frosted glass lists, like the reference (glass themes only) */
+html[data-theme^="glass"] .sgrp,html[data-theme^="glass"] #sheet .panel{
+  background:linear-gradient(170deg,rgba(255,255,255,.34),rgba(255,255,255,.12) 60%,rgba(255,255,255,.22))!important;
+  backdrop-filter:blur(26px) saturate(170%)!important;-webkit-backdrop-filter:blur(26px) saturate(170%)!important;
+  border:1px solid rgba(255,255,255,.5)!important;border-radius:26px!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 12px 30px rgba(0,0,0,.18)!important;
+  overflow:hidden;
+}
+html[data-theme^="glass"] .srow{background:transparent!important;border-bottom:1px solid rgba(255,255,255,.28)}
+html[data-theme^="glass"] .srow:last-child{border-bottom:0}
+html[data-theme="glasslight"] .sgrp,html[data-theme="glasslight"] #sheet .panel{
+  background:linear-gradient(170deg,rgba(255,255,255,.78),rgba(255,255,255,.52) 60%,rgba(255,255,255,.66))!important;
+  border-color:rgba(255,255,255,.9)!important;color:#1b2233;
+}
+html[data-theme="glasslight"] .srow{border-bottom-color:rgba(60,70,100,.14)}
+html[data-theme="glasslight"] .srow .sl,html[data-theme="glasslight"] #sheet .panel h3{color:#1b2233}
+</style>
+<style>
+/* darker, clearly visible separators between list rows */
+html[data-theme="glass"] .srow{border-bottom:1px solid rgba(0,0,0,.45)!important}
+html[data-theme="glasslight"] .srow{border-bottom:1px solid rgba(30,40,70,.38)!important}
+/* lighter glass for speed on phones: smaller blur, no infinite background motion, lighter dock */
+html[data-theme^="glass"] .sgrp,html[data-theme^="glass"] #sheet .panel{backdrop-filter:blur(12px) saturate(150%)!important;-webkit-backdrop-filter:blur(12px) saturate(150%)!important}
+html[data-theme^="glass"] .q2>.q2b::before,html[data-theme^="glass"] .q2>.q2b::after{animation:none!important;transition:none!important}
+html[data-theme^="glass"] .nav>div{backdrop-filter:blur(10px) saturate(170%)!important;-webkit-backdrop-filter:blur(10px) saturate(170%)!important}
+html[data-theme^="glass"] .nav>div::before{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html[data-theme^="glass"] .drop{backdrop-filter:blur(6px) saturate(160%)!important;-webkit-backdrop-filter:blur(6px) saturate(160%)!important}
+</style>
 </head>
-<body><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="dockLens" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.012 0.04" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="36" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<body><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="dockLens" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.01 0.03" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="44" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <div class="orbs"><i></i><i></i><i></i></div>
 <div class="app">
   <section class="screen on" id="s-home"></section>
@@ -1529,7 +1581,7 @@ function dragTo(cx){
   const q=d.getBoundingClientRect(),r0=T[0].getBoundingClientRect(),w=Math.max(...T.map(b=>b.getBoundingClientRect().width));
   dr.style.opacity=1;
   {const nb=T.reduce((a,b)=>{const r=b.getBoundingClientRect(),ra=a.getBoundingClientRect();return Math.abs(r.left+r.width/2-cx)<Math.abs(ra.left+ra.width/2-cx)?b:a});const nr=nb.getBoundingClientRect();
-   if(/glass/.test(document.documentElement.dataset.theme||'')){const W=Math.min(nr.width+18,92),H=Math.min(nr.height+14,q.height-8,72);dr.style.width=W+'px';dr.style.height=H+'px';dr.style.top=(nr.top-q.top-(H-nr.height)/2)+'px';dr.style.left=Math.max(4,Math.min(q.width-W-4,cx-q.left-W/2))+'px'}
+   if(/glass/.test(document.documentElement.dataset.theme||'')){const W=Math.min(nr.width+18,92),H=Math.min(nr.height+14,q.height-8,72);dr.style.width=W+'px';dr.style.height=H+'px';dr.style.top=(nr.top-q.top-(H-nr.height)/2)+'px';dr.style.left=Math.max(36,Math.min(q.width-W-36,cx-q.left-W/2))+'px'}
    else{dr.style.width=w+'px';dr.style.height=r0.height+'px';dr.style.top=(r0.top-q.top)+'px';dr.style.left=Math.max(4,Math.min(q.width-w-4,cx-q.left-w/2))+'px'}}
   let best=0,bd=1e9;T.forEach((b,i)=>{const r=b.getBoundingClientRect(),dd=Math.abs(r.left+r.width/2-cx);if(dd<bd){bd=dd;best=i}});
   T.forEach(b=>{const r=b.getBoundingClientRect(),k=Math.max(0,1-Math.abs(r.left+r.width/2-cx)/(w*1.25));b.style.setProperty('--z',(1+0.5*Math.pow(k,1.5)).toFixed(3))});
@@ -2222,8 +2274,9 @@ function stkTilt(el){
   const cs=[...el.querySelectorAll('.sc')];if(!cs.length)return;
   const w=el.clientWidth||1,sl=Math.abs(el.scrollLeft);
   cs.forEach((c,i)=>{const d=Math.max(-1,Math.min(1,(i*w-sl)/w));c.style.transition='transform .12s linear';c.style.transform=`rotate(${(-d*2.2).toFixed(2)}deg) translateX(${(-d*8).toFixed(1)}px)`});
+  const box=el.parentElement;if(box)box.style.setProperty('--dk',(((sl/w)%1)||0).toFixed(3));
   clearTimeout(el._tiltT);
-  el._tiltT=setTimeout(()=>cs.forEach(c=>{c.style.transition='transform .5s cubic-bezier(.2,.8,.2,1)';c.style.transform=''}),140);
+  el._tiltT=setTimeout(()=>{cs.forEach(c=>{c.style.transition='transform .5s cubic-bezier(.2,.8,.2,1)';c.style.transform=''});const bx=el.parentElement;if(bx)bx.style.setProperty('--dk','0')},140);
 }
 function stkDots(el){syncPeek(el);stkTilt(el);const cs=[...el.querySelectorAll('.sc')];if(!cs.length)return;const rtl=getComputedStyle(el).direction==='rtl',er=el.getBoundingClientRect();let k=0,best=1e9;cs.forEach((c,i)=>{const cr=c.getBoundingClientRect(),d=Math.abs(rtl?cr.right-er.right:cr.left-er.left);if(d<best){best=d;k=i}});el.parentNode.querySelectorAll('.sdots i').forEach((d,i)=>d.classList.toggle('on',i===k))}
 function hrow(ic,label,val,cls,click){return `<button class="srow" ${click?`onclick="${click}"`:'style="cursor:default"'}>${sIco(ic)}<span class="sl">${label}</span>${val!==''?`<em class="${cls||''}" style="font-weight:600">${val}</em>`:''}${click?'<i class="sch">‹</i>':''}</button>`}
@@ -2891,6 +2944,8 @@ function saveTransfer(){
 function walAdd(){const n=$('#wal-name').value.trim();if(!n){toast('اكتب اسم المحفظة');return}S.wallets.push({id:'w'+Date.now(),name:n,ico:'👛',open:0});save();render()}
 const R={home,add:addScr,log,rep,set:setScr,plan:planScr,wal:walScr,th:themeScr,thc:themeColorsScr,lq:lqScr,fnt:fntScr};let cur='home';
 function render(){R[cur]();
+  if(cur==='home'&&window._lastCur!=='home'){document.querySelectorAll('.q2').forEach(q=>{q.classList.remove('stk-in');void q.offsetWidth;q.classList.add('stk-in')})}
+  window._lastCur=cur;
   const bell=document.querySelector('.bell');
   if(bell){const today=iso(new Date());const n=(typeof remItems==='function'?remItems():[]).filter(i=>!String(i.k).startsWith('daily')&&iso(i.at)===today).length;bell.classList.toggle('bell-ring',n>0)}
   if(cur==='home'){const e=$('#heroN');if(e)countUp(e,+e.dataset.v);document.querySelectorAll('.q2>.q2b>.stk').forEach(el=>{syncPeek(el);if(!el._tiltOn){el._tiltOn=1;el.addEventListener('scroll',()=>stkTilt(el),{passive:true})}})}
