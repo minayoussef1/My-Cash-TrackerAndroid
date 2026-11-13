@@ -775,7 +775,7 @@ label.srow input[type=date]{max-width:60%;text-align:end;direction:ltr}
 
 /* ===== home: tiles (right) + vertical stack (left) ===== */
 .q2{display:flex;gap:12px;margin:0 0 16px}
-.q2b{position:relative;flex:1 1 0;min-width:0;height:240px}
+.q2b{position:relative;flex:1 1 0;min-width:0;height:auto;aspect-ratio:1/1}
 .fgrid{height:100%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;background:var(--glass);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow-card);overflow:hidden}
 .fgrid.r1{grid-template-rows:1fr}
 .ft{padding:10px 9px;display:flex;flex-direction:column;justify-content:center;gap:3px;border-inline-end:1px solid var(--line);border-bottom:1px solid var(--line);min-width:0}
@@ -988,21 +988,21 @@ html.lite .drop.lq{animation:none}
 @media (prefers-reduced-motion:reduce){.drop.lq{animation:none}}
 </style>
 <style>
-html[data-theme^="glass"] .drop{z-index:2}
-html[data-theme^="glass"] .nav .drop .lensc{position:absolute;inset:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0;margin:0;background:none;border:0;color:var(--on);font-size:11px;font-weight:600;transform:scale(1.15);pointer-events:none;z-index:1}
-html[data-theme^="glass"] .nav .drop .lensc span{font-size:20px}
+html.fx-bubble .drop{z-index:2}
+html.fx-bubble .nav .drop .lensc{position:absolute;inset:0;width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:0;margin:0;background:none;border:0;color:var(--on);font-size:11px;font-weight:600;transform:scale(1.15);pointer-events:none;z-index:1}
+html.fx-bubble .nav .drop .lensc span{font-size:20px}
 </style>
-<style>html[data-theme^="glass"] .nav .drop .rip{display:none!important}</style>
+<style>html.fx-bubble .nav .drop .rip{display:none!important}</style>
 <style>
 /* hard limits: the bubble can never grow past the dock item size, whatever sets its width while moving */
-html[data-theme^="glass"] .nav>div .drop{max-width:92px!important;max-height:72px!important;overflow:hidden}
+html.fx-bubble .nav>div .drop{max-width:92px!important;max-height:72px!important;overflow:hidden}
 </style>
 <style>
 /* at rest: plain glass bubble under the icons, icon and label untouched */
-html[data-theme^="glass"] .nav>div .drop{z-index:0!important;backdrop-filter:blur(10px) saturate(180%)!important;-webkit-backdrop-filter:blur(10px) saturate(180%)!important}
-html[data-theme^="glass"] .nav>div .drop .lensc{display:none!important}
+html.fx-bubble .nav>div .drop{z-index:0!important;backdrop-filter:blur(10px) saturate(180%)!important;-webkit-backdrop-filter:blur(10px) saturate(180%)!important}
+html.fx-bubble .nav>div .drop .lensc{display:none!important}
 /* while the finger moves: keep the plain bubble (no lens filter, no lifting, no copy) so the bar and screen stay stable */
-html[data-theme^="glass"] .nav>div.dg .drop .lensc,html[data-theme^="glass"] .nav>div .drop.drag .lensc{display:none!important}
+html.fx-bubble .nav>div.dg .drop .lensc,html.fx-bubble .nav>div .drop.drag .lensc{display:none!important}
 </style>
 <style>
 /* the stack under the total balance: cards peek out behind the front card, like a deck */
@@ -1048,26 +1048,26 @@ html.lite .q2>.q2b::before,html.lite .q2>.q2b::after{animation:none!important}
 </style>
 <style>
 /* while the finger moves in glass themes: icons keep their size (no proximity zoom) and the bubble bends what is under it, like the reference */
-html[data-theme^="glass"] .nav>div.dg button:not(.fab),html[data-theme^="glass"] .nav>div.dg button:not(.fab) span{transform:none!important}
+html.fx-bubble .nav>div.dg button:not(.fab),html.fx-bubble .nav>div.dg button:not(.fab) span{transform:none!important}
 </style>
 <style>
-html[data-theme^="glass"] .nav>div.dg .drop,html[data-theme^="glass"] .nav>div .drop.drag{z-index:2!important;backdrop-filter:url(#dockLens) blur(1px) saturate(180%)!important;-webkit-backdrop-filter:url(#dockLens) blur(1px) saturate(180%)!important}
+html.fx-bubble .nav>div.dg .drop,html.fx-bubble .nav>div .drop.drag{z-index:2!important;backdrop-filter:url(#dockLens) blur(1px) saturate(180%)!important;-webkit-backdrop-filter:url(#dockLens) blur(1px) saturate(180%)!important}
 </style>
 <style>
 /* the + button sits under the glass bubble while it passes over it, like the other items */
-html[data-theme^="glass"] .nav button.fab{position:relative;z-index:1}
+html.fx-dock .nav button.fab{position:relative;z-index:1}
 </style>
 <style>
 /* trial: frosted glass lists, like the reference (glass themes only) */
-html[data-theme^="glass"] .sgrp,html[data-theme^="glass"] #sheet .panel{
+html.fx-blur .sgrp,html.fx-blur #sheet .panel{
   background:linear-gradient(170deg,rgba(255,255,255,.34),rgba(255,255,255,.12) 60%,rgba(255,255,255,.22))!important;
   backdrop-filter:blur(26px) saturate(170%)!important;-webkit-backdrop-filter:blur(26px) saturate(170%)!important;
   border:1px solid rgba(255,255,255,.5)!important;border-radius:26px!important;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 12px 30px rgba(0,0,0,.18)!important;
   overflow:hidden;
 }
-html[data-theme^="glass"] .srow{background:transparent!important;border-bottom:1px solid rgba(255,255,255,.28)}
-html[data-theme^="glass"] .srow:last-child{border-bottom:0}
+html.fx-dock .srow{background:transparent!important;border-bottom:1px solid rgba(255,255,255,.28)}
+html.fx-dock .srow:last-child{border-bottom:0}
 html[data-theme="glasslight"] .sgrp,html[data-theme="glasslight"] #sheet .panel{
   background:linear-gradient(170deg,rgba(255,255,255,.78),rgba(255,255,255,.52) 60%,rgba(255,255,255,.66))!important;
   border-color:rgba(255,255,255,.9)!important;color:#1b2233;
@@ -1085,6 +1085,79 @@ html.perf-mid[data-theme^="glass"] .q2>.q2b::before,html.perf-mid[data-theme^="g
 html.perf-mid[data-theme^="glass"] .nav>div{backdrop-filter:blur(10px) saturate(170%)!important;-webkit-backdrop-filter:blur(10px) saturate(170%)!important}
 html.perf-mid[data-theme^="glass"] .nav>div::before{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 html.perf-mid[data-theme^="glass"] .drop{backdrop-filter:blur(6px) saturate(160%)!important;-webkit-backdrop-filter:blur(6px) saturate(160%)!important}
+</style>
+<style>
+/* long press on a stack: all its cards open together in a column over a blurred screen */
+.stk-exp{position:fixed;inset:0;z-index:300;display:flex;align-items:center;justify-content:center;background:rgba(10,14,30,.3);opacity:0;transition:opacity .28s ease}
+.stk-exp.on{opacity:1}
+html:not(.perf-mid):not(.lite) .stk-exp{backdrop-filter:blur(14px) saturate(160%);-webkit-backdrop-filter:blur(14px) saturate(160%)}
+.stk-exp-list{display:flex;flex-direction:column;gap:14px;width:min(86vw,340px);max-height:90vh;overflow-y:auto;padding:12px;scrollbar-width:none}
+.stk-exp-card{position:relative!important;flex:0 0 auto!important;width:100%!important;height:150px!important;transform:none!important;animation:stkExpIn .45s cubic-bezier(.2,.8,.2,1) both}
+@keyframes stkExpIn{from{opacity:0;transform:translateY(40px) scale(.9)}to{opacity:1;transform:none}}
+html.lite .stk-exp-card{animation:none}
+</style>
+<style>
+.q2>.q2b>.stk{display:block!important;overflow:hidden!important;scroll-snap-type:none!important;touch-action:pan-y;position:relative}
+.q2>.q2b>.stk .sc{position:absolute!important;inset:0!important;flex:none!important;width:100%!important;height:100%!important}
+</style>
+<style>
+/* options menu for a stack: preview of the card on top, rounded list with icons under it */
+.stkm-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;width:min(88vw,320px)}
+.stkm-prev{width:min(56vw,210px);aspect-ratio:1/1;border-radius:30px;overflow:hidden;box-shadow:0 18px 40px rgba(0,0,0,.35);transform:scale(1.02)}
+.stkm-panel{width:100%;border-radius:26px;overflow:hidden;background:rgba(246,247,251,.9);color:#1b2233;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 14px 34px rgba(0,0,0,.25)}
+html[data-theme="dark"] .stkm-panel,html[data-theme="glass"] .stkm-panel{background:rgba(44,48,66,.9);color:#fff}
+.stkm-row{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:15px 18px;background:none;border:0;color:inherit;font:inherit;font-size:17px;text-align:start;cursor:pointer}
+.stkm-row svg{width:22px;height:22px;flex:0 0 22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.stkm-row+.stkm-row{border-top:1px solid rgba(0,0,0,.1)}
+html[data-theme="dark"] .stkm-row+.stkm-row,html[data-theme="glass"] .stkm-row+.stkm-row{border-top-color:rgba(255,255,255,.12)}
+.stkm-row.red{color:#ff3b30}
+.stkm-sep{height:8px;background:rgba(0,0,0,.07)}
+html[data-theme="dark"] .stkm-sep,html[data-theme="glass"] .stkm-sep{background:rgba(255,255,255,.07)}
+</style>
+<style>
+/* stacks look like the iOS widget: no cards peeking behind, a big rounded corner and a light grey rim */
+.q2>.q2b::before,.q2>.q2b::after{display:none!important}
+.q2>.q2b{margin-top:0!important}
+.q2>.q2b>.stk{border-radius:38px!important}
+.q2>.q2b>.stk .sc{border-radius:38px!important;border:4px solid rgba(186,192,204,.9);box-sizing:border-box}
+</style>
+<style>
+/* the dock is light in the medium and low performance levels: no glass, no bubble, no stretch or lens, no motion */
+html.perf-mid[data-theme^="glass"] .nav>div,html.lite[data-theme^="glass"] .nav>div{background:var(--nav,rgba(255,255,255,.94))!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:0!important;box-shadow:0 6px 20px rgba(0,0,0,.12)!important}
+html.perf-mid[data-theme^="glass"] .nav>div::before,html.lite[data-theme^="glass"] .nav>div::before{display:none!important}
+html.perf-mid[data-theme^="glass"] .nav>div .drop,html.lite[data-theme^="glass"] .nav>div .drop{background:rgba(var(--accrgb),.14)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;border:0!important;z-index:0!important;animation:none!important;transform:none!important}
+html.perf-mid[data-theme^="glass"] .nav>div .drop .lensc,html.lite[data-theme^="glass"] .nav>div .drop .lensc{display:none!important}
+html.perf-mid[data-theme^="glass"] .nav>div.dg button:not(.fab),html.lite[data-theme^="glass"] .nav>div.dg button:not(.fab){transform:none!important;transition:none!important}
+html.perf-mid .nav>div .drop.lq,html.lite .nav>div .drop.lq{animation:none!important}
+</style>
+<style>
+/* lists open as a sheet in the widget-picker style: rounded top, grab handle, rounded rows, not a full screen */
+#sheet .back{background:rgba(0,0,0,.38)}
+#sheet .panel{left:8px;right:8px;max-width:none;bottom:8px;border-radius:38px;max-height:84vh;overflow-y:auto;padding:10px 14px calc(env(safe-area-inset-bottom,0px) + 16px);border:0;box-shadow:0 -6px 40px rgba(0,0,0,.25)}
+#sheet .panel::before{content:"";display:block;width:44px;height:5px;border-radius:99px;background:rgba(128,128,140,.55);margin:2px auto 14px}
+#sheet .panel h3{font-size:19px;font-weight:700;margin:6px 0 12px}
+#sheet .panel .btn.s,#sheet .panel .stkm-row{border-radius:20px}
+#sheet .panel .btn.s{display:block;width:100%;margin:6px 0;padding:14px 16px;text-align:start;background:var(--glass,rgba(127,127,140,.14));border:1px solid var(--line);font-size:16px}
+#sheet .panel .g{background:none!important;border:0!important;box-shadow:none!important;padding:0}
+#sheet .panel .empty{padding:18px 8px}
+</style>
+<style>
+.sheet-search{display:block;width:100%;box-sizing:border-box;padding:11px 16px;margin:0 0 10px;border:0;border-radius:14px;background:rgba(127,127,140,.16);color:inherit;font:inherit;font-size:16px;outline:none;text-align:start}
+.sheet-search::placeholder{color:rgba(128,128,140,.9)}
+</style>
+<style>
+/* performance switches */
+html.fx-noblur *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html.fx-noshadow *{box-shadow:none!important}
+html.fx-noanim *,html.fx-noanim *::before,html.fx-noanim *::after{animation:none!important}
+html.fx-nobubble .nav>div .drop{background:rgba(var(--accrgb),.14)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;z-index:0!important;transform:none!important}
+html.fx-nobubble .nav>div .drop .lensc{display:none!important}
+html.fx-noglassdock[data-theme^="glass"] .nav>div{background:var(--nav,rgba(255,255,255,.94))!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:0!important;box-shadow:0 6px 20px rgba(0,0,0,.12)!important}
+html.fx-noglassdock[data-theme^="glass"] .nav>div::before{display:none!important}
+html.fx-noglassdock[data-theme^="glass"] .nav>div .drop{background:rgba(var(--accrgb),.14)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important;z-index:0!important}
+/* liquid glass: tinted is visibly coloured, clear stays see-through */
+html.lg-tint[data-theme^="glass"] .nav>div{background:linear-gradient(160deg,rgba(var(--accrgb),.45),rgba(var(--accrgb),.18))!important}
+html.lg-tint[data-theme^="glass"] .sgrp,html.lg-tint[data-theme^="glass"] #sheet .panel{background:linear-gradient(170deg,rgba(var(--accrgb),.38),rgba(var(--accrgb),.14))!important}
 </style>
 </head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><filter id="dockLens" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.01 0.03" numOctaves="2" seed="5" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="44" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
@@ -1357,7 +1430,7 @@ function moveDrop(anim){
   if(!b){dr.style.opacity=0;return}
   const r=b.getBoundingClientRect(),q=d.getBoundingClientRect();
   dr.style.opacity=1;
-  if(/glass/.test(document.documentElement.dataset.theme||'')){
+  if(document.documentElement.classList.contains('fx-bubble')){
     const W=Math.min(r.width+18,92),H=Math.min(r.height+14,q.height-8,72);
     dr.style.width=W+'px';dr.style.height=H+'px';
     dr.style.top=(r.top-q.top-(H-r.height)/2)+'px';dr.style.left=(r.left-q.left-(W-r.width)/2)+'px';
@@ -1581,7 +1654,7 @@ function dragTo(cx){
   const q=d.getBoundingClientRect(),r0=T[0].getBoundingClientRect(),w=Math.max(...T.map(b=>b.getBoundingClientRect().width));
   dr.style.opacity=1;
   {const nb=T.reduce((a,b)=>{const r=b.getBoundingClientRect(),ra=a.getBoundingClientRect();return Math.abs(r.left+r.width/2-cx)<Math.abs(ra.left+ra.width/2-cx)?b:a});const nr=nb.getBoundingClientRect();
-   if(/glass/.test(document.documentElement.dataset.theme||'')){const W=Math.min(nr.width+18,92),H=Math.min(nr.height+14,q.height-8,72);dr.style.width=W+'px';dr.style.height=H+'px';dr.style.top=(nr.top-q.top-(H-nr.height)/2)+'px';dr.style.left=Math.max(36,Math.min(q.width-W-36,cx-q.left-W/2))+'px'}
+   if(document.documentElement.classList.contains('fx-bubble')){const W=Math.min(nr.width+18,92),H=Math.min(nr.height+14,q.height-8,72);dr.style.width=W+'px';dr.style.height=H+'px';dr.style.top=(nr.top-q.top-(H-nr.height)/2)+'px';dr.style.left=Math.max(36,Math.min(q.width-W-36,cx-q.left-W/2))+'px'}
    else{dr.style.width=w+'px';dr.style.height=r0.height+'px';dr.style.top=(r0.top-q.top)+'px';dr.style.left=Math.max(4,Math.min(q.width-w-4,cx-q.left-w/2))+'px'}}
   let best=0,bd=1e9;T.forEach((b,i)=>{const r=b.getBoundingClientRect(),dd=Math.abs(r.left+r.width/2-cx);if(dd<bd){bd=dd;best=i}});
   T.forEach(b=>{const r=b.getBoundingClientRect(),k=Math.max(0,1-Math.abs(r.left+r.width/2-cx)/(w*1.25));b.style.setProperty('--z',(1+0.5*Math.pow(k,1.5)).toFixed(3))});
@@ -2138,7 +2211,7 @@ function applyTheme(){document.documentElement.classList.toggle('lite',!!S.lite)
   if(t==='auto')t=S.glassAuto&&!S.ramLow?(dm.matches?'glass':'glasslight'):(dm.matches?'dark':'light');
   const _blk=S.theme==='black';if(_blk)t='dark';
   const h=document.documentElement,st=h.style,[a,b]=accPair();
-  S.lite=(S.perf==='low'||!!S.ramLow);h.dataset.theme=t;h.classList.toggle('lite',S.lite);h.classList.toggle('perf-mid',S.perf==='mid');h.classList.toggle('black',_blk);h.classList.toggle('lg-tint',S.lg==='tinted');h.classList.toggle('bold',S.bold!==false);applyFont();
+  S.lite=(!!S.ramLow||!fxOn('anim'));h.dataset.theme=t;h.classList.toggle('fx-blur',fxOn('blur'));h.classList.toggle('fx-bubble',fxOn('bubble'));h.classList.toggle('fx-dockglass',fxOn('glassdock'));h.classList.toggle('lite',!!S.ramLow);h.classList.toggle('perf-mid',false);['blur','shadow','anim','bubble','glassdock','stackanim'].forEach(k=>h.classList.toggle('fx-no'+k,!fxOn(k)));h.classList.toggle('black',_blk);h.classList.toggle('lg-tint',S.lg==='tinted');h.classList.toggle('bold',S.bold!==false);applyFont();
   st.setProperty('--acc',a);st.setProperty('--acc2',b);st.setProperty('--accrgb',hx(a).join(','));st.setProperty('--acc2rgb',hx(b).join(','));
   if(t==='glass'){const B='#0b1226';st.setProperty('--page',`radial-gradient(120% 70% at 80% 0%,${mixc(a,B,.4)} 0%,transparent 60%),radial-gradient(90% 60% at 0% 100%,${mixc(b,B,.4)} 0%,transparent 55%),linear-gradient(180deg,${mixc(a,B,.15)},${B})`)}
   else if(t==='glasslight'){const W='#ffffff';st.setProperty('--page',`radial-gradient(120% 70% at 80% 0%,${mixc(a,W,.45)} 0%,transparent 62%),radial-gradient(90% 60% at 0% 100%,${mixc(b,W,.4)} 0%,transparent 58%),linear-gradient(180deg,${mixc(a,W,.1)},${mixc(b,W,.16)})`)}
@@ -2160,7 +2233,16 @@ function themeColorsScr(){
   <div class="g themeCard"><div class="thTitle">${tr('الألوان')}</div><div class="swgrid6">${ACC_SOLID.map(k=>`<button class="sw6 ${swOn(k)}" style="background:linear-gradient(135deg,${ACC[k][0]},${ACC[k][1]})" onclick="mixPick('${k}')" aria-label="${k}"></button>`).join('')}</div></div>`;
   setTimeout(mixUI,0);
 }
-function setPerf(k){S.perf=k;if(k==='low'&&(S.theme==='glass'||S.theme==='glasslight'))S.theme=S.theme==='glass'?'dark':'light';save();applyTheme();themeScr()}
+const PERF_PRESET={low:{blur:false,shadow:false,anim:false,bubble:false,glassdock:false,stackanim:false},mid:{blur:true,shadow:true,anim:false,bubble:false,glassdock:false,stackanim:false}};
+function fxOn(k){
+  const p=S.perf||'high';
+  if(p!=='high')return PERF_PRESET[p][k];
+  if(S.fx&&S.fx[k]!==undefined)return !!S.fx[k];
+  return true;
+}
+function fxToggle(k){S.fx=S.fx||{};S.fx[k]=!fxOn(k);save();applyTheme();themeScr()}
+function fxReset(){S.fx={};save();applyTheme();themeScr()}
+function setPerf(k){S.perf=k;if(k==='high'){S.fx={};const dark=S.theme==='dark'||S.theme==='black'||(S.theme==='auto'&&matchMedia('(prefers-color-scheme: dark)').matches);S.theme=dark?'glass':'glasslight'}if(k==='low'&&(S.theme==='glass'||S.theme==='glasslight'))S.theme=S.theme==='glass'?'dark':'light';save();applyTheme();themeScr()}
 function themeScr(){
   const TL={light:'فاتح',dark:'غامق',auto:'تلقائي',glass:'غامق زجاجي',glasslight:'فاتح زجاجي',black:'غامق'};
   const isGl=S.theme==='glass'||S.theme==='glasslight';
@@ -2173,13 +2255,13 @@ function themeScr(){
   <h2 class="thBig">${tr('المظهر')}</h2><p class="thSub">${tr('خصص شكل التطبيق حسب ذوقك')}</p>
   <div class="g themeCard"><div class="thTitle">${tr('النمط')}</div>
     <div class="modeRow">${modes.map(([k,l,ic])=>`<button class="modeTile ${modeOn(k)?'on':''}" onclick="setModeSimple('${k}')"><span class="mIc">${ic}</span><span class="mLb">${tr(l)}</span>${modeOn(k)?'<span class="chk">✓</span>':''}</button>`).join('')}</div>
-    <button class="thRow" onclick="toggleGlass()"><span>${tr('الواجهة الزجاجية')}</span><span class="sw2 ${isGl?'on':''}"><i></i></span></button>
+    
     <button class="thRow" onclick="go('lq')"><span>${tr('الزجاج السائل')}</span><span class="thVal">${S.lg==='tinted'?tr('ملون'):tr('شفاف')} ›</span></button>
     <button class="thRow" onclick="go('fnt')"><span>${tr('الخط')}</span><span class="thVal">${({omnes:'Omnes Arabic',naskh:'Adobe Naskh',arslan:'Arslan Wessam',sys:tr('خط الموبايل')})[(S.font&&S.font.ar)||'ping']||'PingAR'} ›</span></button>
     <button class="thRow" onclick="toggleBold()"><span>${tr('خط عريض')}</span><span class="sw2 ${S.bold!==false?'on':''}"><i></i></span></button>
     <button class="thRow" onclick="go('thc')"><span>${tr('تخصيص الألوان')}</span><span class="thDots"><i style="background:${accPair()[0]}"></i><i style="background:${accPair()[1]}"></i><b>›</b></span></button></div>
   <div class="g themeCard"><div class="thTitle">${tr('الألوان')}</div><div class="swgrid6">${sw}</div></div>
-<div class="g themeCard"><div class="thTitle">${tr('الأداء')}</div><div class="tabs" style="margin-top:6px">${[['low',tr('منخفض')],['mid',tr('متوسط')],['high',tr('عالي')]].map(([v,l])=>`<button class="chip ${(S.perf||'high')===v?'on':''}" onclick="setPerf('${v}')">${l}</button>`).join('')}</div><small style="color:var(--mut)">${tr('منخفض: من غير زجاج ولا حركات. متوسط: زجاج أخف وحركات أقل. عالي: كل الزجاج والحركات')}</small></div>
+<div class="g themeCard"><div class="thTitle">${tr('الأداء')}</div><div class="tabs" style="margin-top:6px">${[['low',tr('منخفض')],['mid',tr('متوسط')],['high',tr('عالي')]].map(([v,l])=>`<button class="chip ${(S.perf||'high')===v?'on':''}" onclick="setPerf('${v}')">${l}</button>`).join('')}</div>${(S.perf||'high')==='high'?`${[['blur','البلور (الزجاج)'],['shadow','الظلال'],['anim','الحركات والأنيميشن'],['bubble','فقاعة الدوك (العدسة)'],['glassdock','الدوك الزجاجي'],['stackanim','حركات الستاكات']].map(([k,l])=>`<button class="thRow" onclick="fxToggle('${k}')"><span>${tr(l)}</span><span class="sw2 ${fxOn(k)?'on':''}"><i></i></span></button>`).join('')}<button class="thRow" onclick="fxReset()"><span>${tr('رجّع الافتراضي')}</span></button>`:`<small style="color:var(--mut);display:block;margin-top:8px">${tr('منخفض ومتوسط بيضبطوا كل حاجة لوحدهم. اختار عالي عشان تتحكم في كل حاجة.')}</small>`}</div>
   `;
   setTimeout(mixUI,0);
 }
@@ -2270,9 +2352,10 @@ function rowH(t){
 let homeOpen={recent:true};
 function homeTg(el){homeOpen[el.dataset.k]=el.open}
 const STK_GRAD={d:'linear-gradient(135deg,#3b82f6,#6366f1)',e:'linear-gradient(135deg,#f43f5e,#fb7185)',i:'linear-gradient(135deg,#10b981,#06b6d4)',l:'linear-gradient(135deg,#8b5cf6,#a78bfa)',t:'linear-gradient(135deg,#84cc16,#22c55e)',v:'linear-gradient(135deg,#f59e0b,#f97316)',y:'linear-gradient(135deg,#0ea5e9,#22d3ee)'};
-function syncPeek(el){const box=el&&el.parentElement;if(!box)return;const cs=[...el.querySelectorAll('.sc')];if(!cs.length)return;const rtl=getComputedStyle(el).direction==='rtl',er=el.getBoundingClientRect();let k=0,best=1e9;cs.forEach((c,i)=>{const cr=c.getBoundingClientRect(),d=Math.abs(rtl?cr.right-er.right:cr.left-er.left);if(d<best){best=d;k=i}});const n=cs.length,col=j=>{const c=cs[j%n];const cl=c?[...c.classList].find(x=>STK_GRAD[x]):null;return cl?STK_GRAD[cl]:null};const g1=col(k+1),g2=col(k+2);if(g1)box.style.setProperty('--pk1',g1);if(g2)box.style.setProperty('--pk2',g2)}
+function syncPeek(el){const box=el&&el.parentElement;if(!box)return;const cs=[...el.querySelectorAll('.sc')];if(!cs.length)return;
+if(el._idx!==undefined){const g=j=>{const c=cs[j%cs.length];const cl=c?[...c.classList].find(x=>STK_GRAD[x]):null;return cl?STK_GRAD[cl]:null};const a=g(el._idx+1),b=g(el._idx+2);if(a)box.style.setProperty('--pk1',a);if(b)box.style.setProperty('--pk2',b);return}const rtl=getComputedStyle(el).direction==='rtl',er=el.getBoundingClientRect();let k=0,best=1e9;cs.forEach((c,i)=>{const cr=c.getBoundingClientRect(),d=Math.abs(rtl?cr.right-er.right:cr.left-er.left);if(d<best){best=d;k=i}});const n=cs.length,col=j=>{const c=cs[j%n];const cl=c?[...c.classList].find(x=>STK_GRAD[x]):null;return cl?STK_GRAD[cl]:null};const g1=col(k+1),g2=col(k+2);if(g1)box.style.setProperty('--pk1',g1);if(g2)box.style.setProperty('--pk2',g2)}
 function stkTilt(el){
-  if(S.lite||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  if(S.lite||!fxOn('stackanim')||matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   const cs=[...el.querySelectorAll('.sc')];if(!cs.length)return;
   const w=el.clientWidth||1,sl=Math.abs(el.scrollLeft);
   cs.forEach((c,i)=>{const d=Math.max(-1,Math.min(1,(i*w-sl)/w));c.style.transition='transform .12s linear';c.style.transform=`rotate(${(-d*2.2).toFixed(2)}deg) translateX(${(-d*8).toFixed(1)}px)`});
@@ -2280,7 +2363,167 @@ function stkTilt(el){
   clearTimeout(el._tiltT);
   el._tiltT=setTimeout(()=>{cs.forEach(c=>{c.style.transition='transform .5s cubic-bezier(.2,.8,.2,1)';c.style.transform=''});const bx=el.parentElement;if(bx)bx.style.setProperty('--dk','0')},140);
 }
-function stkDots(el){syncPeek(el);stkTilt(el);const cs=[...el.querySelectorAll('.sc')];if(!cs.length)return;const rtl=getComputedStyle(el).direction==='rtl',er=el.getBoundingClientRect();let k=0,best=1e9;cs.forEach((c,i)=>{const cr=c.getBoundingClientRect(),d=Math.abs(rtl?cr.right-er.right:cr.left-er.left);if(d<best){best=d;k=i}});el.parentNode.querySelectorAll('.sdots i').forEach((d,i)=>d.classList.toggle('on',i===k))}
+const STK_NAMES={d:'الأيام المتبقية',y:'المتاح يومياً',v:'الادخار',t:'العشور',i:'إجمالي الدخل',e:'إجمالي المصروف',l:'سلف مستحقة',b:'فواتير',g:'جمعيات'};
+function stkKey(c){return [...c.classList].find(x=>x.length===1)||''}
+function stkStore(){S.stk=S.stk||{hid:{},sw:{}};S.stk.hid=S.stk.hid||{};S.stk.sw=S.stk.sw||{};return S.stk}
+function stkApplyStore(el,sid){
+  const st=stkStore();window._stkCache=window._stkCache||{};
+  [...el.querySelectorAll('.sc')].forEach(c=>{const k=stkKey(c);if(k)window._stkCache[k]=c.outerHTML});
+  [...el.querySelectorAll('.sc')].forEach(c=>{const k=stkKey(c);if(k&&st.hid[sid+':'+k])c.remove()});
+  [...el.querySelectorAll('.sc')].forEach((c,i)=>{const want=st.sw[sid+':'+i];if(want&&window._stkCache[want]&&stkKey(c)!==want){const t=document.createElement('div');t.innerHTML=window._stkCache[want];const n=t.firstElementChild;if(n)c.replaceWith(n)}});
+  stkPaintColors(el,sid);
+}
+function stkIco(k){
+  const P={info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.6v.4"/>',
+    minus:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8"/>',
+    stack:'<rect x="4" y="9" width="16" height="11" rx="3"/><path d="M7 6h10M9.5 3h5"/>',
+    stackMinus:'<rect x="4" y="9" width="16" height="11" rx="3"/><path d="M7 6h10M9.5 3h5"/><circle cx="18" cy="18" r="3.4" fill="currentColor" stroke="none"/><path d="M16.6 18h2.8" stroke="#fff"/>',
+    phone:'<rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M10 18h4"/>',palette:'<circle cx="12" cy="12" r="9"/><circle cx="8.5" cy="10" r="1.3" fill="currentColor"/><circle cx="12" cy="7.8" r="1.3" fill="currentColor"/><circle cx="15.5" cy="10" r="1.3" fill="currentColor"/>'};
+  return `<svg viewBox="0 0 24 24" aria-hidden="true">${P[k]||''}</svg>`;
+}
+const STK_SWATCHES=['#3b82f6','#6366f1','#10b981','#06b6d4','#f43f5e','#f59e0b','#8b5cf6','#84cc16','#0ea5e9','#f472b6','#14b8a6','#111827'];
+function stkPaintColors(el,sid){const m=(stkStore().col)||{};[...el.querySelectorAll('.sc')].forEach(c=>{const v=m[sid+':'+stkKey(c)];if(v)c.style.background=v})}
+function stkColorPick(sid,idx){
+  const el=document.querySelectorAll('.q2>.q2b>.stk')[sid];const c=el&&el.querySelectorAll('.sc')[idx];if(!c)return;
+  const key=stkKey(c);
+  const sw=STK_SWATCHES.map(v=>`<button onclick="stkSetColor(${sid},'${key}','${v}')" style="width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:${v};cursor:pointer"></button>`).join('');
+  openPick(tr('تعديل اللون'),`<div class="g"><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:8px 0">${sw}</div>
+    <div style="display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px"><label style="font-size:14px">${tr('لون مخصص')}</label><input type="color" value="#3b82f6" onchange="stkSetColor(${sid},'${key}',this.value)" style="width:56px;height:40px;border:0;background:none;padding:0"></div>
+    <button class="btn s" style="width:100%;margin-top:12px" onclick="stkSetColor(${sid},'${key}','')">${tr('الافتراضي')}</button></div>`);
+}
+function stkSetColor(sid,key,val){const st=stkStore();st.col=st.col||{};if(val)st.col[sid+':'+key]=val;else delete st.col[sid+':'+key];save();closeSheet();render()}
+const HERO_GRADS=['linear-gradient(135deg,#8a6cff,#2f6dff)','linear-gradient(135deg,#10b981,#06b6d4)','linear-gradient(135deg,#f43f5e,#fb7185)','linear-gradient(135deg,#f59e0b,#f97316)','linear-gradient(135deg,#0ea5e9,#22d3ee)','linear-gradient(135deg,#84cc16,#22c55e)','linear-gradient(135deg,#111827,#374151)','linear-gradient(135deg,#ec4899,#8b5cf6)'];
+const HERO_PARTS=[['avail','المتاح بعد الديون والفواتير'],['debt','الديون والفواتير'],['wal','المحافظ'],['pill','نسبة الصرف من الدخل'],['foot','اضغط لعرض تفاصيل المحافظ'],['wave','الموجات']];
+function heroPrefs(){S.heroPrefs=S.heroPrefs||{col:'',hide:{}};S.heroPrefs.hide=S.heroPrefs.hide||{};return S.heroPrefs}
+function heroParts(h){
+  const sub=[...h.querySelectorAll('.sub2')];
+  const pill=[...h.querySelectorAll('span')].find(x=>/^صرفت/.test(x.textContent.trim()));
+  return {avail:sub[0],debt:sub[1],wal:h.querySelector('.wbrk'),pill:pill&&pill.parentElement,foot:h.querySelector('.h2foot'),wave:h.querySelector('.hwave')};
+}
+function heroApply(h){
+  if(!h)return;const P=heroPrefs();
+  h.style.setProperty('background',P.col||'',P.col?'important':'');
+  const parts=heroParts(h);
+  Object.keys(parts).forEach(k=>{const el=parts[k];if(el)el.style.display=P.hide[k]?'none':''});
+}
+function heroMenu(){
+  if(document.getElementById('stkExp'))return;
+  const ov=document.createElement('div');ov.id='stkExp';ov.className='stk-exp';
+  const wrap=document.createElement('div');wrap.className='stkm-wrap';
+  const pn=document.createElement('div');pn.className='stkm-panel';
+  pn.innerHTML=`<button class="stkm-row" onclick="closeExp();heroColorPick()"><span>${tr('تعديل اللون')}</span>${stkIco('palette')}</button>`+
+    `<button class="stkm-row" onclick="closeExp();heroPartsPick()"><span>${tr('إظهار / إخفاء أجزاء')}</span>${stkIco('stack')}</button>`+
+    `<div class="stkm-sep"></div>`+
+    `<button class="stkm-row red" onclick="closeExp();heroReset()"><span>${tr('رجّع الكل')}</span>${stkIco('minus')}</button>`;
+  wrap.appendChild(pn);ov.appendChild(wrap);
+  ov.addEventListener('click',e=>{if(e.target===ov)closeExp()});
+  document.body.appendChild(ov);requestAnimationFrame(()=>ov.classList.add('on'));
+}
+function heroColorPick(){
+  const sw=HERO_GRADS.map(g=>`<button onclick="heroSetCol('${g}')" style="width:44px;height:44px;border-radius:50%;border:2px solid rgba(255,255,255,.7);background:${g};cursor:pointer"></button>`).join('');
+  openPick(tr('تعديل اللون'),`<div class="g"><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:8px 0">${sw}</div>
+    <div style="display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px"><label style="font-size:14px">${tr('لون مخصص')}</label><input type="color" value="#5f7bff" onchange="heroSetCol('linear-gradient(135deg,'+this.value+','+this.value+'aa)')" style="width:56px;height:40px;border:0;background:none;padding:0"></div>
+    <button class="btn s" style="width:100%;margin-top:12px" onclick="heroSetCol('')">${tr('الافتراضي')}</button></div>`);
+}
+function heroSetCol(g){const P=heroPrefs();P.col=g;save();closeSheet();render()}
+function heroPartsPick(){
+  const P=heroPrefs();
+  const rows=HERO_PARTS.map(([k,l])=>`<button class="btn s" onclick="heroToggle('${k}')">${P.hide[k]?'☐':'☑'} ${tr(l)}</button>`).join('');
+  openPick(tr('إظهار / إخفاء أجزاء'),`<div class="g">${rows}</div>`);
+}
+function heroToggle(k){const P=heroPrefs();P.hide[k]=!P.hide[k];save();closeSheet();render()}
+function heroReset(){S.heroPrefs={col:'',hide:{}};save();closeExp();render()}
+function stkMenu(el,sid){
+  const cs=[...el.querySelectorAll('.sc')];if(!cs.length)return;
+  const idx=Math.min(el._idx||0,cs.length-1),c=cs[idx],key=stkKey(c),name=(c.querySelector('span')||{}).textContent||'';
+  const prev=c.cloneNode(true);prev.classList.remove('sc-pop');prev.style.cssText='position:relative;width:100%;height:100%;transform:none;opacity:1;z-index:auto;transition:none';
+  const ov=document.createElement('div');ov.id='stkExp';ov.className='stk-exp';
+  const wrap=document.createElement('div');wrap.className='stkm-wrap';
+  const pv=document.createElement('div');pv.className='stkm-prev';pv.appendChild(prev);
+  const rows=[];
+  if(c.getAttribute('onclick'))rows.push(`<button class="stkm-row" onclick="closeExp();stkEdit(${sid},${idx})"><span>${tr('تعديل')} “${name}”</span>${stkIco('info')}</button>`);
+  rows.push(`<button class="stkm-row" onclick="closeExp();stkHide(${sid},'${key}')"><span>${tr('امسح')} “${name}”</span>${stkIco('stackMinus')}</button>`);
+  rows.push(`<button class="stkm-row" onclick="closeExp();stkSwapPick(${sid},${idx})"><span>${tr('بدّل')} “${name}”</span>${stkIco('stack')}</button>`);
+  rows.push(`<button class="stkm-row" onclick="closeExp();stkColorPick(${sid},${idx})"><span>${tr('تعديل اللون')}</span>${stkIco('palette')}</button>`);
+  rows.push('<div class="stkm-sep"></div>');
+  rows.push(`<button class="stkm-row" onclick="closeExp();stkEditList(${sid})"><span>${tr('تعديل الستاك')}</span>${stkIco('stack')}</button>`);
+  rows.push(`<button class="stkm-row" onclick="closeExp();stkReset()"><span>${tr('رجّع الكروت')}</span>${stkIco('phone')}</button>`);
+  rows.push('<div class="stkm-sep"></div>');
+  rows.push(`<button class="stkm-row red" onclick="closeExp();stkHideAll(${sid})"><span>${tr('امسح الستاك')}</span>${stkIco('minus')}</button>`);
+  const pn=document.createElement('div');pn.className='stkm-panel';pn.innerHTML=rows.join('');
+  wrap.appendChild(pv);wrap.appendChild(pn);ov.appendChild(wrap);
+  ov.addEventListener('click',e=>{if(e.target===ov)closeExp()});
+  document.body.appendChild(ov);
+  requestAnimationFrame(()=>ov.classList.add('on'));
+}
+function stkEditList(sid){
+  const el=document.querySelectorAll('.q2>.q2b>.stk')[sid];if(!el)return;
+  const rows=[...el.querySelectorAll('.sc')].map(c=>{const k=stkKey(c),n=(c.querySelector('span')||{}).textContent||k;return `<button class="btn s" onclick="stkHide(${sid},'${k}')">⊖ ${tr('امسح')} “${n}”</button>`}).join('');
+  openPick(tr('تعديل الستاك'),`<div class="g">${rows||`<div class="empty">${tr('الستاك فاضي')}</div>`}</div>`);
+}
+
+function stkEdit(sid,idx){const el=document.querySelectorAll('.q2>.q2b>.stk')[sid];const c=el&&el.querySelectorAll('.sc')[idx];closeSheet();if(c)c.click()}
+function stkHide(sid,key){const st=stkStore();st.hid[sid+':'+key]=1;save();closeSheet();render()}
+function stkHideAll(sid){const st=stkStore();const el=document.querySelectorAll('.q2>.q2b>.stk')[sid];if(el)[...el.querySelectorAll('.sc')].forEach(c=>{const k=stkKey(c);if(k)st.hid[sid+':'+k]=1});save();closeSheet();render()}
+function stkReset(){S.stk={hid:{},sw:{}};save();closeSheet();render()}
+function stkSwapPick(sid,idx){
+  const opts=Object.keys(window._stkCache||{}).filter(k=>STK_NAMES[k]);
+  const rows=opts.length?opts.map(k=>`<button class="btn s" onclick="stkSwap(${sid},${idx},'${k}')">${tr(STK_NAMES[k])}</button>`).join(''):`<div class="empty">${tr('مفيش كروت تانية')}</div>`;
+  openPick(tr('بدّل الكارت بـ'),`<div class="g">${rows}</div>`);
+}
+function stkSwap(sid,idx,key){const st=stkStore();st.sw[sid+':'+idx]=key;save();closeSheet();render()}
+function stkExpand(el){
+  if(document.getElementById('stkExp'))return;
+  const cs=[...el.querySelectorAll('.sc')];if(!cs.length)return;
+  const rtl=getComputedStyle(el).direction==='rtl';
+  const ov=document.createElement('div');ov.id='stkExp';ov.className='stk-exp';
+  const list=document.createElement('div');list.className='stk-exp-list';
+  cs.forEach((c,i)=>{const n=c.cloneNode(true);n.classList.remove('sc-pop');n.classList.add('stk-exp-card');n.style.transform='';n.style.transition='';n.style.animationDelay=(i*80)+'ms';
+    n.onclick=e=>{e.stopPropagation();closeExp();el.scrollTo({left:(rtl?-1:1)*i*(el.clientWidth||1),behavior:'smooth'})};list.appendChild(n)});
+  ov.appendChild(list);ov.onclick=closeExp;
+  document.body.appendChild(ov);
+  requestAnimationFrame(()=>ov.classList.add('on'));
+}
+function closeExp(){const ov=document.getElementById('stkExp');if(!ov)return;ov.classList.remove('on');setTimeout(()=>ov.remove(),280)}
+function stkLongPress(el){
+  if(el._lpOn)return;el._lpOn=1;
+  let t=null,sx=0,sy=0;
+  el.addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY;clearTimeout(t);t=setTimeout(()=>{t=null;stkMenu(el,[...document.querySelectorAll('.q2>.q2b>.stk')].indexOf(el))},450)},{passive:true});
+  el.addEventListener('pointermove',e=>{if(t&&Math.hypot(e.clientX-sx,e.clientY-sy)>10){clearTimeout(t);t=null}},{passive:true});
+  const cancel=()=>{clearTimeout(t);t=null};
+  el.addEventListener('pointerup',cancel,{passive:true});el.addEventListener('pointercancel',cancel,{passive:true});
+}
+function stkCards(el){return [...el.querySelectorAll('.sc')]}
+function stkDotsIdx(el){const d=el.parentElement&&el.parentElement.querySelector('.sdots');if(!d)return;[...d.children].forEach((x,i)=>x.classList.toggle('on',i===(el._idx||0)))}
+function stkPaint(el,dx,anim){
+  const cs=stkCards(el);if(!cs.length)return;
+  const w=el.clientWidth||1,idx=el._idx||0,pr=Math.min(1,Math.abs(dx)/w);
+  cs.forEach((c,i)=>{
+    c.style.transition=anim?'transform .45s cubic-bezier(.2,.8,.2,1), opacity .35s ease':'none';
+    let x=0,y=0,sc=.9,op=0,z=1,rot=0;
+    if(i===idx){x=dx;sc=1-.03*pr;rot=dx/w*2.5;op=1;z=4}
+    else if(i===idx-1){x=-w+Math.max(dx,0);op=dx>0?1:0;z=5;sc=1}
+    else if(i===idx+1){sc=.92+.08*(dx<0?pr:0);y=(1-(dx<0?pr:0))*12;op=1;z=3}
+    else if(i===idx+2){sc=.86+.06*(dx<0?pr:0);y=(1-(dx<0?pr:0))*22;op=.7;z=2}
+    c.style.zIndex=z;c.style.opacity=op;
+    c.style.transform=`translateX(${x}px) translateY(${y}px) scale(${sc}) rotate(${rot}deg)`;
+  });
+  const bx=el.parentElement;if(bx)bx.style.setProperty('--dk',(pr*0).toFixed(3));
+}
+function stkRelease(el,dx){
+  const w=el.clientWidth||1,n=stkCards(el).length;let idx=el._idx||0;
+  if(dx<-w*.22&&idx<n-1)idx++;else if(dx>w*.22&&idx>0)idx--;
+  el._idx=idx;stkPaint(el,0,true);stkDotsIdx(el);syncPeek(el);
+}
+function stkDrag(el){
+  if(el._dragOn)return;el._dragOn=1;
+  let sx=0,drag=false,moved=false,dx=0;
+  el.addEventListener('pointerdown',e=>{sx=e.clientX;drag=true;moved=false;dx=0;try{el.setPointerCapture(e.pointerId)}catch(_){}},{passive:true});
+  el.addEventListener('pointermove',e=>{if(!drag)return;dx=e.clientX-sx;if(Math.abs(dx)>6)moved=true;if(moved)stkPaint(el,dx,false)},{passive:true});
+  const end=()=>{if(!drag)return;drag=false;if(moved)stkRelease(el,dx);moved=false};
+  el.addEventListener('pointerup',end,{passive:true});el.addEventListener('pointercancel',end,{passive:true});
+}
+function stkDots(el){if(el._idx!==undefined){stkDotsIdx(el);return}syncPeek(el);stkTilt(el);const cs=[...el.querySelectorAll('.sc')];if(!cs.length)return;const rtl=getComputedStyle(el).direction==='rtl',er=el.getBoundingClientRect();let k=0,best=1e9;cs.forEach((c,i)=>{const cr=c.getBoundingClientRect(),d=Math.abs(rtl?cr.right-er.right:cr.left-er.left);if(d<best){best=d;k=i}});el.parentNode.querySelectorAll('.sdots i').forEach((d,i)=>d.classList.toggle('on',i===k))}
 function hrow(ic,label,val,cls,click){return `<button class="srow" ${click?`onclick="${click}"`:'style="cursor:default"'}>${sIco(ic)}<span class="sl">${label}</span>${val!==''?`<em class="${cls||''}" style="font-weight:600">${val}</em>`:''}${click?'<i class="sch">‹</i>':''}</button>`}
 function hsec(k,ic,title,val,body){return String(body||'').trim()?`<details class="pa" data-k="${k}" ${homeOpen[k]?'open':''} ontoggle="homeTg(this)"><summary class="srow">${sIco(ic)}<span class="sl">${tr(title)}</span>${val?`<em>${val}</em>`:''}<i class="sch">‹</i></summary><div class="pbody">${body}</div></details>`:''}
 function upcomingHTML(){
@@ -2348,7 +2591,15 @@ function refreshAdd(){const a=$('#a-amt')?$('#a-amt').value:'',n=$('#a-note')?$(
 function pickCat(c){add.cat=c;closeSheet();refreshAdd()}
 function pickWal(id){add.w=id;closeSheet();refreshAdd()}
 function pickType(t){closeSheet();setT(t)}
-function openPick(title,html){window._shTok=(window._shTok||0)+1;$('#sheet').classList.remove('out');$('#sheet').innerHTML=`<div class="back" onclick="closeSheet()"></div><div class="panel det"><div class="grab"></div><h3>${title}</h3>${html}</div>`;$('#sheet').classList.add('on')}
+function sheetSearch(){
+  const panel=document.querySelector('#sheet .panel');if(!panel||panel.querySelector('.sheet-search'))return;
+  const items=[...panel.querySelectorAll('button')].filter(b=>!b.classList.contains('sheet-x'));
+  if(items.length<=6)return;
+  const inp=document.createElement('input');inp.type='search';inp.className='sheet-search';inp.placeholder=tr('ابحث…');
+  inp.addEventListener('input',()=>{const q=inp.value.trim().toLowerCase();items.forEach(b=>{b.style.display=(!q||b.textContent.toLowerCase().includes(q))?'':'none'})});
+  panel.insertBefore(inp,panel.firstElementChild?panel.firstElementChild.nextSibling:null);
+}
+function openPick(title,html){setTimeout(sheetSearch,0);window._shTok=(window._shTok||0)+1;$('#sheet').classList.remove('out');$('#sheet').innerHTML=`<div class="back" onclick="closeSheet()"></div><div class="panel det"><div class="grab"></div><h3>${title}</h3>${html}</div>`;$('#sheet').classList.add('on')}
 function openCatPick(){const cats=CATS[add.type]||[];openPick('اختار التصنيف',`<div class="g"><div class="cats">${cats.map(c=>`<button class="cat ${add.cat===c[1]?'on':''}" onclick="pickCat('${c[1]}')"><span>${c[0]}</span>${c[1]}</button>`).join('')}</div></div>`)}
 function openWalPick(){openPick('اختار المحفظة',`<div class="sgrp">${S.wallets.map(w=>`<button class="srow" onclick="pickWal('${w.id}')"><i class="ti">${w.ico}</i><span class="sl">${wn(w)}</span>${(add.w||W0().id)===w.id?'<em>✓</em>':''}</button>`).join('')}</div>`)}
 function openTypePick(){
@@ -2691,7 +2942,7 @@ function openSet(k){
   const _hueNow=(()=>{const c=(accPair()[0]||'#4f7cff').replace('#','');const r=parseInt(c.slice(0,2),16)/255,g=parseInt(c.slice(2,4),16)/255,b=parseInt(c.slice(4,6),16)/255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360}return Math.round(h)})();
   const themeHTML=`<div class="g themeCard"><div class="thTitle">النمط</div>
     <div class="modeRow">${_modes.map(([k,l,ic])=>`<button class="modeTile ${(S.theme===k||(k==='light'&&S.theme==='glasslight')||(k==='dark'&&S.theme==='glass')||(k==='dark'&&S.theme==='black'))?'on':''}" onclick="setModeSimple('${k}')"><span class="mIc">${ic}</span><span class="mLb">${tr(l)}</span>${(S.theme===k||(k==='light'&&S.theme==='glasslight')||(k==='dark'&&S.theme==='glass')||(k==='dark'&&S.theme==='black'))?'<span class="chk">✓</span>':''}</button>`).join('')}</div>
-    <button class="thRow" onclick="toggleGlass()"><span>${tr('الواجهة الزجاجية')}</span><span class="sw2 ${_isGlass?'on':''}"><i></i></span></button></div>
+    </div>
   <div class="g themeCard"><div class="thTitle">${tr('الألوان')}</div>
     <div class="swgrid6">${ACC_SOLID.map(k=>`<button class="sw6 ${swOn(k)}" style="background:linear-gradient(135deg,${ACC[k][0]},${ACC[k][1]})" onclick="mixPick('${k}')" aria-label="${k}"></button>`).join('')}</div></div>
   <div class="g themeCard"><div class="thTitle">${tr('لون المخصص')} · ${tr('اختار لونين')}</div>
@@ -2950,7 +3201,12 @@ function render(){R[cur]();
   window._lastCur=cur;
   const bell=document.querySelector('.bell');
   if(bell){const today=iso(new Date());const n=(typeof remItems==='function'?remItems():[]).filter(i=>!String(i.k).startsWith('daily')&&iso(i.at)===today).length;bell.classList.toggle('bell-ring',n>0)}
-  if(cur==='home'){const e=$('#heroN');if(e)countUp(e,+e.dataset.v);document.querySelectorAll('.q2>.q2b>.stk').forEach(el=>{syncPeek(el);if(!el._tiltOn){el._tiltOn=1;el.addEventListener('scroll',()=>stkTilt(el),{passive:true})}})}
+  if(cur==='home'){const e=$('#heroN');if(e)countUp(e,+e.dataset.v);
+    const hero=document.querySelector('.hero2');if(hero){heroApply(hero);if(!hero._lpOn){hero._lpOn=1;let t=null,sx=0,sy=0;
+      hero.addEventListener('pointerdown',ev=>{sx=ev.clientX;sy=ev.clientY;clearTimeout(t);t=setTimeout(()=>{t=null;heroMenu()},450)},{passive:true});
+      hero.addEventListener('pointermove',ev=>{if(t&&Math.hypot(ev.clientX-sx,ev.clientY-sy)>10){clearTimeout(t);t=null}},{passive:true});
+      const cancel=()=>{clearTimeout(t);t=null};hero.addEventListener('pointerup',cancel,{passive:true});hero.addEventListener('pointercancel',cancel,{passive:true});}}
+    document.querySelectorAll('.q2>.q2b>.stk').forEach((el,sid)=>{stkApplyStore(el,sid);const nC=el.querySelectorAll('.sc').length;if(el._idx===undefined||el._idx>=nC)el._idx=0;stkPaint(el,0,false);stkDotsIdx(el);stkDrag(el);syncPeek(el);if(!el._tiltOn){el._tiltOn=1;el.addEventListener('scroll',()=>stkTilt(el),{passive:true})}stkLongPress(el)})}
   if(cur==='home'&&!window._peek&&!S.lite&&!matchMedia('(prefers-reduced-motion: reduce)').matches){
     window._peek=1;
     setTimeout(()=>{const first=document.querySelector('.stk>.sc');if(!first||!first.animate)return;
@@ -3182,7 +3438,7 @@ const WLN={cash:{ar:'كاش',en:'Cash',fr:'Espèces',de:'Bargeld',it:'Contanti',
 const WK={'كاش':'cash','Cash':'cash','فيزا':'visa','Visa':'visa','فيزا مشتريات':'visap','Visa Purchases':'visap','كارت':'card','Card':'card','محفظة':'wallet','Wallet':'wallet','انستاباي':'insta','InstaPay':'insta','فودافون كاش':'voda','Vodafone Cash':'voda','بنك':'bank','Bank':'bank'};
 const WL=k=>WLN[k][S.lang]||WLN[k].en;
 /* generic sheet */
-function sheet(h){window._shTok=(window._shTok||0)+1;$('#sheet').classList.remove('out');$('#sheet').innerHTML=`<div class="back" onclick="closeSheet()"></div><div class="panel det"><div class="grab"></div>${h}</div>`;$('#sheet').classList.add('on')}
+function sheet(h){setTimeout(sheetSearch,0);window._shTok=(window._shTok||0)+1;$('#sheet').classList.remove('out');$('#sheet').innerHTML=`<div class="back" onclick="closeSheet()"></div><div class="panel det"><div class="grab"></div>${h}</div>`;$('#sheet').classList.add('on')}
 /* ---- salary ---- */
 let salRows=[];
 const salDue=()=>{const n=new Date();return Math.min(S.sal.day,new Date(n.getFullYear(),n.getMonth()+1,0).getDate())};
